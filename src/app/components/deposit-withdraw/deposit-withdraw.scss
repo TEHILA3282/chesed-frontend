@@ -1,0 +1,70 @@
+.deposit-withdraw-wrapper {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 24px;
+  direction: rtl;
+}
+
+.main-title {
+  text-align: center;
+  font-size: 1.6em;
+  margin-bottom: 24px;
+}
+
+.form-box {
+  margin-bottom: 20px;
+}
+
+.subtitle {
+   font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-row {
+  margin-bottom: 18px;
+}
+
+.input-label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 1em;
+}
+
+.required {
+  color: #a88c00;
+  font-weight: bold;
+}
+
+.input-field {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 12px;
+  font-size: 1em;
+  background: #f7f7f7;
+  margin-bottom: 8px;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1.15em;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

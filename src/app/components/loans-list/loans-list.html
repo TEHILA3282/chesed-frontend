@@ -1,0 +1,15 @@
+<div class="actions-container">
+  <h2 class="title">בחרו סוג הלוואה</h2>
+  <p class="subtitle">בחרו את סוג ההלוואה הרצוי שברצונכם לבצע</p>
+
+  <div class="cards">
+    <div
+      class="card"
+      *ngFor="let loan of loanTypes"
+      (click)="goToLoan(loan)"
+    >
+      <h3>{{ loan.name }}</h3>
+      <button class="circle-btn"><span class="arrow">⬅</span></button>
+    </div>
+  </div>
+</div>

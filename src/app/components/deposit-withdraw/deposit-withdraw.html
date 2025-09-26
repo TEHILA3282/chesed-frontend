@@ -1,0 +1,37 @@
+<form #withdrawForm="ngForm" (ngSubmit)="onSubmit(withdrawForm)" novalidate>
+  <div class="deposit-withdraw-wrapper">
+    <h2 class="main-title">בקשה למשיכת הפקדה</h2>
+
+    <div class="form-box">
+      <label class="subtitle">מבקש לבצע משיכה מתיקי ההפקדות שברשותי</label>
+
+      <div class="input-row">
+        <label class="input-label">סכום <span class="required">*</span></label>
+        <input
+          type="number"
+          name="amount"               
+          [(ngModel)]="amount"
+          min="1"
+          required
+          class="input-field" />
+      </div>
+
+      <div class="input-row">
+        <label class="input-label">נא פרט את בקשתך <span class="required">*</span></label>
+        <textarea
+          name="requestText"           
+          [(ngModel)]="requestText"
+          rows="5"
+          required
+          class="input-field"></textarea>
+      </div>
+    </div>
+
+    <button
+      type="submit"                    
+      class="submit-btn"
+      [disabled]="loading || withdrawForm.invalid">
+      {{ loading ? 'שולח...' : 'שליחה' }}
+    </button>
+  </div>
+</form>

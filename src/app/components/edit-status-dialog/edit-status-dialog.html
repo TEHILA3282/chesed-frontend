@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>עריכת סטטוס למשתמש</h2>
+
+<div mat-dialog-content>
+  <p><strong>{{ data.firstName }} {{ data.lastName }}</strong> ({{ data.email }})</p>
+
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>בחר סטטוס חדש</mat-label>
+    <mat-select [(ngModel)]="selectedStatus">
+      <mat-option value="מאושר">מאושר</mat-option>
+      <mat-option value="נדחה">נדחה</mat-option>
+      <mat-option value="ממתין">ממתין</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">ביטול</button>
+  <button mat-raised-button color="primary" (click)="confirm()">שמור</button>
+</div>

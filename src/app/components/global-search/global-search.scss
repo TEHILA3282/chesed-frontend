@@ -1,0 +1,195 @@
+/* ==========================
+   app-global-search (SCSS) – FLUID
+   ========================== */
+
+:host{
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+/* לא חוסמים גלילה אנכית גלובלית, רק אופקית */
+html, body { overflow-x: hidden; }
+
+/* ------------ מצב ברירת מחדל ------------ */
+.search-wrapper{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(6px, 1vw, 10px);
+  max-width: min(92vw, 720px);
+  margin-inline: auto;
+  overscroll-behavior: contain;
+  z-index: 1;
+}
+
+.search-wrapper input{
+  inline-size: 100%;
+  block-size: clamp(44px, 6vh, 48px);
+  border-radius: clamp(8px, 1vw, 10px);
+  border: 1px solid #d6d6d6;
+  padding-inline: clamp(12px, 1.4vw, 16px);
+  font-size: clamp(14px, 1.2vw, 16px);
+  direction: rtl;
+  color: #192A4A;
+  font-weight: 500;
+}
+.search-wrapper input::placeholder{ color: #7c8799; }
+
+.search-wrapper button{
+  inline-size: clamp(42px, 6vh, 48px);
+  block-size: clamp(42px, 6vh, 48px);
+  border: 0;
+  border-radius: clamp(8px, 1vw, 10px);
+  background: #192A4A;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+/* ---------------- Dropdown ---------------- */
+.results-dropdown{
+  position: absolute;
+  inset-inline: var(--drop-pad, clamp(14px, 2vw, 20px)) var(--drop-pad, clamp(14px, 2vw, 20px));
+  inset-block-start: calc(100% + clamp(10px, 1.6vw, 16px));
+
+  background: #F6F6F6;
+  border: 1px solid #192A4A;
+  border-radius: clamp(32px, 6vw, 52px);
+  box-shadow: 0 16px 32px rgba(0,0,0,.12);
+
+  max-height: clamp(240px, 48vh, 383px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+  padding-inline-end: clamp(8px, 1vw, 12px);
+  padding-block-end: clamp(16px, 2vh, 28px);
+  background-clip: padding-box;
+
+  clip-path: inset(0 round clamp(32px, 6vw, 52px));
+  z-index: 100000;
+  isolation: isolate;
+  transform: translateZ(0);
+  direction: rtl;
+  contain: paint;
+}
+
+/* פייד עדין בתחתית */
+.results-dropdown::after{
+  content: "";
+  position: sticky;
+  display: block;
+  bottom: 0;
+  height: clamp(12px, 2vh, 18px);
+  margin-top: calc(-1 * clamp(12px, 2vh, 18px));
+  background: linear-gradient(to bottom, rgba(246,246,246,0), rgba(246,246,246,1));
+  pointer-events: none;
+  border-bottom-left-radius: clamp(32px, 6vw, 52px);
+  border-bottom-right-radius: clamp(32px, 6vw, 52px);
+}
+
+.result-item{
+  display: flex;
+  align-items: center;
+  min-height: clamp(60px, 9vh, 76px);
+  padding-inline: clamp(18px, 2.2vw, 28px);
+  background: #fff;
+  font-size: clamp(16px, 1.3vw, 18px);
+  color: #192A4A;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+}
+.result-item + .result-item{ border-top: 1px solid #DFE5EE; }
+.result-item:hover{ background: #F0F3F8; }
+
+/* fallback קטן */
+.results-dropdown .result-item:last-child{
+  margin-bottom: clamp(8px, 1.4vh, 16px);
+}
+
+/* עיצוב פס גלילה (כרום/אדג') */
+.results-dropdown::-webkit-scrollbar { width: clamp(8px, 1vw, 10px); }
+.results-dropdown::-webkit-scrollbar-track { background: transparent; }
+.results-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(25,42,74,.25);
+  border-radius: 10px;
+}
+
+/* ------------ מצב בתוך ה"פיל" ------------ */
+:host-context(.search-band__container){
+  position: relative;
+  z-index: 10;
+}
+:host-context(.search-band__container) .search-wrapper{
+  all: unset;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  position: relative;
+  z-index: 11;
+}
+
+:host-context(.search-band__container) .search-wrapper input{
+  all: unset;
+  inline-size: 100%;
+  block-size: 100%;
+  direction: rtl;
+  color: #192A4A;
+  font-weight: 600;
+
+  /* שומר 96px בדסקטופ, מצטמצם קלות במובייל */
+  line-height: var(--field-h, clamp(88px, 7.2vh, 96px));
+  padding-block: 0;
+  padding-inline:
+    var(--text-right-pad, clamp(44px, 3.5vw, 56px))
+    calc(var(--btn-size, clamp(60px, 7.2vh, 76px)) + var(--pad-edge, clamp(16px, 1.8vw, 24px)));
+  font-size: clamp(18px, 1.5vw, 20px);
+}
+:host-context(.search-band__container) .search-wrapper input::placeholder{
+  color: #7c8799; opacity: .95;
+}
+
+:host-context(.search-band__container) .search-wrapper button{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  inset-inline-end: clamp(16px, 1.6vw, 23px);
+  inline-size: var(--btn-size, clamp(60px, 7.2vh, 76px));
+  block-size: var(--btn-size, clamp(60px, 7.2vh, 76px));
+  border-radius: 50%;
+  border: 0;
+  background: #192A4A;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.18),
+    0 0 0 clamp(4px, .5vw, 6px) rgba(255,255,255,.9);
+}
+:host-context(.search-band__container) .search-wrapper button .mat-icon{
+  font-size: clamp(28px, 2.2vw, 34px);
+  width: 1em; height: 1em; line-height: 1;
+}
+
+:host-context(.search-band__container) .results-dropdown{
+  border-radius: clamp(32px, 6vw, 52px);
+  clip-path: inset(0 round clamp(32px, 6vw, 52px));
+  max-height: clamp(260px, 48vh, 383px);
+  z-index: 100000;
+}
+
+/* LTR */
+[dir="ltr"] :host-context(.search-band__container) .search-wrapper input{
+  padding-inline:
+    calc(var(--btn-size, clamp(60px, 7.2vh, 76px)) + var(--pad-edge, clamp(16px, 1.8vw, 24px)))
+    var(--text-right-pad, clamp(44px, 3.5vw, 56px));
+}
+
+/* רספונסיביות – טאץ' מינימלי, רוב העבודה ע"י clamp */
+@media (max-width: 720px){
+  :host-context(.search-band__container) .search-wrapper input{
+    font-size: clamp(16px, 2.6vw, 18px);
+  }
+}

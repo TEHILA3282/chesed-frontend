@@ -1,0 +1,25 @@
+<div class="freeze-page">
+  <h2 class="main-title">{{ title() }}</h2>
+  <p class="subtitle">{{ subtitle() }}</p>
+</div>
+
+<form [formGroup]="form" dir="rtl" class="freeze-form" (ngSubmit)="submit()">
+  <mat-form-field appearance="fill" class="full">
+    <mat-label>כתבו את סיבת הבקשה</mat-label>
+    <textarea matInput formControlName="reason" rows="6"></textarea>
+    <mat-hint align="end">  {{ form.controls.reason.value.length || 0 }}/1000</mat-hint>
+  </mat-form-field>
+
+  <div class="ack-box">
+    <mat-checkbox formControlName="acknowledged">
+      {{ ackText() }}
+    </mat-checkbox>
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" type="submit"
+            [disabled]="form.invalid || loading()">
+      שליחת בקשה לאישור
+    </button>
+  </div>
+</form>

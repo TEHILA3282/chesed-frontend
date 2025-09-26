@@ -1,0 +1,33 @@
+<div class="messages-page" dir="rtl">
+  <div class="blue-band" aria-hidden="true"></div>
+
+  <main class="messages-shell">
+    <!-- פס אמצע בתוך מעטפת התוכן בלבד -->
+    <div class="guide guide--v" aria-hidden="true"></div>
+
+    <!-- ימין: הודעות כלליות -->
+    <section class="col col--right">
+      <h2 class="section-title">
+        הודעות כלליות <span class="title-bar" aria-hidden="true"></span>
+      </h2>
+      <div class="list">
+        <div class="msg-pill" *ngFor="let msg of publicMessages" [ngClass]="getClass(msg.important)">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="text">{{ msg.perut }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="col col--left">
+      <h2 class="section-title">
+        הודעות אישיות <span class="title-bar" aria-hidden="true"></span>
+      </h2>
+      <div class="list">
+        <div class="msg-pill" *ngFor="let msg of privateMessages" [ngClass]="getClass(msg.important)">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="text">{{ msg.perut }}</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

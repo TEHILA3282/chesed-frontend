@@ -1,0 +1,46 @@
+<div class="actions-page" dir="rtl" #pageRoot>
+  <main class="actions-shell">
+    <section class="top">
+      <div class="balances" #balancesCol>
+        <h2 class="section-title"><span>פירוט ריכוז יתרות</span></h2>
+
+        <ul class="pill-list" #balancesList>
+          <li *ngFor="let action of balanceSummary" class="pill">
+            <span class="txt">{{ action.perut }}</span>
+            <span class="mark" [ngClass]="getClass(action.important)"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="charts">
+        <app-user-chart class="chart"></app-user-chart>
+      </div>
+    </section>
+  </main>
+
+  <section class="band" #bandBox>
+    <div class="band__inner">
+      <h2 class="section-title section-title--on-band"><span>פעולות אחרונות</span></h2>
+
+      <ul class="pill-list">
+        <li *ngFor="let action of recentVisible" class="pill pill--on-band">
+          <span class="txt">{{ action.perut }}</span>
+          <span class="mark mark--force-blue"></span>
+        </li>
+      </ul>
+
+      <button
+        *ngIf="hasMoreRecent"
+        type="button"
+        class="more-btn"
+        (click)="toggleShowMore()"
+        [attr.aria-expanded]="showAllRecent">
+        {{ showAllRecent ? 'פחות' : 'עוד' }}
+      </button>
+    </div>
+  </section>
+
+  <!-- הקווים הדינמיים -->
+  <div #gapLine  class="gap-line gap-line--blue"  aria-hidden="true"></div>
+  <div #bandLine class="gap-line gap-line--white" aria-hidden="true"></div>
+</div>

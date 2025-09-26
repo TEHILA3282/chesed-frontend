@@ -1,0 +1,71 @@
+<div class="loan-header">
+  <h2 class="main-title">{{ loanTypeTitle }}</h2>
+  <p class="subtitle">{{ subtitleText }}</p>
+</div>
+
+<div class="loan-container">
+<form #loanForm="ngForm" (ngSubmit)="onSubmit()" dir="rtl" class="form-wrapper">
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>על סך</mat-label>
+      <input matInput type="number" [(ngModel)]="amount" name="amount" required />
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!isBridge" appearance="fill" style="width: 100%;">
+      <mat-label>מספר תשלומים</mat-label>
+      <input matInput type="number" [(ngModel)]="paymentsCount" name="paymentsCount" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>לאיזו מטרה הינך מעוניין בהלוואה?</mat-label>
+      <mat-select [(ngModel)]="loanPurpose" name="loanPurpose" required>
+        <mat-option *ngFor="let purpose of loanPurposes" [value]="purpose">
+          {{ purpose }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <p *ngIf="detailsHelper" class="helper-text">{{ detailsHelper }}</p>
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>{{ detailsLabel }}</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="description"
+        name="description"
+        rows="4"
+        [placeholder]="detailsPlaceholder"
+        required
+      ></textarea>
+    </mat-form-field>
+
+    <ng-container *ngIf="!isBridge">
+      <label>האם ההלוואה לדירה?</label>
+      <mat-radio-group [(ngModel)]="isForApartment" name="isForApartment" required>
+        <mat-radio-button value="yes">כן</mat-radio-button>
+        <mat-radio-button value="no">לא</mat-radio-button>
+      </mat-radio-group>
+
+      <div *ngIf="isForApartment === 'yes'" class="apartment-details">
+        <p>קופת הגמ"ח תגבה באופן חד פעמי סכום של 15 ש"ח מחשבון הבנק של המבקש לצורך אימות עניין הרכישה</p>
+        <mat-checkbox [(ngModel)]="apartmentConfirmed" name="apartmentConfirmed">מאשר/ת</mat-checkbox>
+      </div>
+    </ng-container>
+
+    <div class="guarantors-grid">
+ <app-guarantors-form
+  (guarantorsChange)="onGuarantorsChange($event)">
+</app-guarantors-form>
+    </div>
+
+      <button
+    class="submit-btn"
+    type="submit"
+    [disabled]="
+      loanForm.invalid ||
+      (!isBridge && isForApartment === 'yes' && !apartmentConfirmed)
+    ">
+    אישור
+  </button>
+  </form>
+</div>

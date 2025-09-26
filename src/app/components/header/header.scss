@@ -1,0 +1,94 @@
+/* =========================
+   Header – Fluid / Responsive (Updated)
+   הדגשה רק לעמוד האקטיבי + איחוד גדלי טקסט
+   ========================= */
+
+$header-fs: 21.66px; /* כמו בפיגמה וכמו "התנתקות" */
+
+.header-wrap {
+  position: sticky;
+  top: 10px;
+  z-index: 1000;
+  padding: 0 clamp(8px, 1vw, 16px);
+}
+
+.header-shell {
+  direction: rtl;
+  height: clamp(84px, 6vw, 105px);
+  max-width: min(92vw, 1762px);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 2.3vw, 40px);
+  background: #192A4A;
+  color: #FFFFFF;
+  border-radius: clamp(56px, 10vw, 180px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: normal; /* לא לכפות משקל על הצאצאים */
+}
+
+/* ימין: auth */
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 0.7vw, 8px);
+  white-space: nowrap;
+
+  a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 400;           /* Regular */
+    font-size: $header-fs;      /* 👈 אותו גודל כמו בתפריט */
+  }
+
+  .hello { color: #E9E9E9; font-weight: 400; font-size: $header-fs; }
+  .sep { opacity: .6; }
+}
+
+/* שמאל: קישורים */
+.nav-links {
+  display: flex;
+  gap: clamp(12px, 1.4vw, 24px);
+
+  > a {
+    color: #FFFFFF;
+    text-decoration: none;
+
+    font-weight: 400 !important; /* Regular */
+    font-size: $header-fs;        /* 👈 אותו גודל כמו "התנתקות" */
+    line-height: 1;
+    position: relative;
+    padding-bottom: clamp(3px, 0.5vw, 6px);
+    opacity: .85;
+    transition: opacity .18s ease, color .18s ease, font-weight .18s ease;
+
+    &:hover, &:focus { opacity: 1; }
+
+    &.active{
+      font-weight: 800 !important; /* ExtraBold */
+      color: #fff;
+      opacity: 1;
+    }
+    &.active::after{
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      bottom: 0;
+      width: 90%;
+      height: 2px;
+      background: #E9E9E9;
+      border-radius: 2px;
+    }
+  }
+}
+
+/* נקודות שבירה (רק הקטנה קלה בניידים, כדי לשמור יחסיות) */
+@media (max-width: 720px) {
+  :root { --header-scale: 0.9; } /* הורדה עדינה */
+  .nav-links > a,
+  .auth-section a,
+  .auth-section .hello {
+    font-size: calc(#{$header-fs} * var(--header-scale));
+  }
+}

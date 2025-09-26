@@ -1,0 +1,106 @@
+<ng-container *ngIf="detailsForm; else loading">
+  <section class="page">
+    <div class="card" dir="rtl">
+      <h2 class="card-title">עריכת פרטים אישיים</h2>
+
+      <form [formGroup]="detailsForm" (ngSubmit)="submit()" class="grid" novalidate>
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="שם פרטי*" formControlName="firstName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="שם משפחה*" formControlName="lastName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="טלפון נייד" formControlName="phoneNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="טלפון קווי" formControlName="landlineNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="אימייל*" type="email" formControlName="email" />
+          <mat-error *ngIf="detailsForm.get('email')?.hasError('required')">שדה חובה.</mat-error>
+          <mat-error *ngIf="detailsForm.get('email')?.hasError('email') && !detailsForm.get('email')?.hasError('emailTaken')">
+            אימייל לא תקין.
+          </mat-error>
+          <mat-error *ngIf="detailsForm.get('email')?.hasError('emailTaken')">
+            האימייל כבר קיים במוסד.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="תאריך לידה" [matDatepicker]="picker" formControlName="dateOfBirth" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <mat-select formControlName="personalStatus">
+            <mat-option value="" disabled>סטטוס אישי</mat-option>
+            <mat-option *ngFor="let status of personalStatuses" [value]="status">{{ status }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field">
+          <input matInput placeholder="רחוב" formControlName="street" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field last-row-house">
+          <input matInput placeholder="מספר בית" type="number" formControlName="houseNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="field last-row-city">
+          <input matInput placeholder="עיר" formControlName="city" />
+        </mat-form-field>
+
+        <button mat-raised-button class="primary-btn last-row-item" type="submit">
+          ←&nbsp;עדכון פרטים
+        </button>
+      </form>
+    </div>
+
+    <section class="blue-section">
+      <div class="card" dir="rtl">
+        <h2 class="card-title">פרטי חשבון בנק</h2>
+
+        <form [formGroup]="bankForm" class="grid bank-grid" novalidate>
+          <mat-form-field appearance="fill" class="field">
+            <input matInput placeholder="מספר בנק*" formControlName="bankNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="field">
+            <input matInput placeholder="סניף בנק*" formControlName="branchNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="field">
+            <input matInput placeholder="מספר חשבון*" formControlName="accountNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="field field--wide">
+            <input matInput placeholder="שם בעלי החשבון*" formControlName="accountOwnerName" />
+          </mat-form-field>
+
+          <div class="debit-pill field--wide">
+            <span class="q">האם נחתמה הוראת קבע בבנק?</span>
+            <mat-radio-group formControlName="hasDirectDebit" class="radios">
+              <mat-radio-button [value]="false">לא</mat-radio-button>
+              <mat-radio-button [value]="true">כן</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <button mat-raised-button class="primary-btn last-bank-btn" type="button" (click)="submitBank()">
+            ←&nbsp;עדכון פרטים
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </section>
+</ng-container>
+
+<ng-template #loading>
+  <div class="loading-message">טוען פרטי משתמש...</div>
+</ng-template>

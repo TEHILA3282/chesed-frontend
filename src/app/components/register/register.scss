@@ -1,0 +1,200 @@
+/* ===== בסיס / פריסה ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0; width: 100%; min-height: 100%;
+  overflow-x: clip; background: #F6F6F6;
+}
+
+.register-page{
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding-inline: clamp(12px, 3vw, 32px);
+  /* פס כחול – אותם ערכים כמו קודם */
+  --band-top: clamp(220px, 28vh, 360px);
+  --band-bottom: clamp(90px, 11vh, 150px);
+}
+
+.blue-band{
+  position: fixed; inset-inline: 0;
+  top: calc(var(--app-header-h, 0px) + var(--band-top));
+  bottom: 0;
+  background: #192A4A;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== מעטפת הטופס ===== */
+.form-shell{ z-index: 1; display: grid; place-items: start center; padding-bottom: var(--band-bottom); }
+
+.card{
+  width: 100%;
+  max-width: clamp(880px, 56vw, 1100px);
+  margin-inline: auto;
+  background: #F6F6F6;
+  border: 1px solid rgba(25,42,74,.85);
+  border-radius: 52px;
+  padding: clamp(24px, 2.6vw, 44px);   /* מעט יותר padding לכרטיס */
+  box-shadow: 0 8px 24px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.04);
+  overflow: clip;
+  direction: rtl;
+}
+
+/* ===== כותרת בתוך הכרטיס ===== */
+.header{ text-align:center; z-index:1; }
+.header--in-card{
+  margin-block-start: clamp(10px, 1.2vw, 14px);
+  margin-block-end: clamp(16px, 2.2vw, 28px); /* ↑ יותר מרווח מתחת לכותרת לפני השדות */
+}
+.header .title{
+  margin: 0 0 6px;
+  color:#192A4A; letter-spacing:.03em;
+  font-family:"Assistant", Arial, sans-serif; font-weight:800;
+  /* קטן יותר לפי הפיגמה */
+  font-size: clamp(22px, 2.6vw, 34px);
+  line-height: 1.25;
+}
+.header .sub{ margin:0; color:#192A4A; font-size: clamp(12px, 1.2vw, 14px); }
+.header .sub a{ color:#192A4A; text-decoration:underline; }
+
+/* ===== גריד ===== */
+$form-row-h: 78px;
+$field-bg: #D9D9D9;
+$field-radius: 20px;
+
+.form-grid{
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: clamp(10px, 1.4vw, 18px);
+  grid-auto-rows: $form-row-h;
+  grid-auto-flow: row dense;
+  /* להדגשה: עוד קצת רווח מהכותרת */
+  margin-block-start: clamp(8px, 1.8vw, 20px);
+}
+@media (max-width:1024px){ .form-grid{ grid-template-columns:minmax(0,1fr); } }
+.form-grid > * { min-width:0; }
+
+/* ===== טיפוגרפיה בשדות ===== */
+$field-ff: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+$field-fs: clamp(18px, 1.6vw, 22px);
+$field-fw: 300;
+$field-ink: #192A4A;
+
+/* Material – בלי קו תחתון, גובה אחיד */
+:host ::ng-deep .mat-mdc-form-field .mdc-line-ripple{ display:none!important; }
+:host ::ng-deep .mat-mdc-form-field{
+  width:100%!important; direction:rtl;
+  --mdc-filled-text-field-container-color:#{$field-bg};
+  --mdc-filled-text-field-container-shape:#{$field-radius};
+  --mdc-filled-text-field-active-indicator-color:transparent;
+  --mdc-filled-text-field-focus-active-indicator-color:transparent;
+  --mdc-filled-text-field-hover-active-indicator-color:transparent;
+}
+:host ::ng-deep .mat-mdc-text-field-wrapper{ height:$form-row-h; border-radius:$field-radius; background:$field-bg!important; }
+:host ::ng-deep .mat-mdc-form-field-flex{ height:$form-row-h; align-items:center; }
+:host ::ng-deep .mat-mdc-form-field-infix{
+  min-height:$form-row-h; display:flex; align-items:center; gap:8px; padding:0 16px!important;
+}
+
+:host ::ng-deep .mat-mdc-input-element,
+:host ::ng-deep .mat-mdc-select-value-text{
+  width:100%!important; padding:0!important; line-height:normal; text-align:right;
+  font-family:$field-ff!important; font-size:$field-fs!important; font-weight:$field-fw!important; color:$field-ink!important;
+}
+
+/* ===== לייבל במרכז, ואח"כ "עולה" כראוי ===== */
+:host ::ng-deep .mdc-text-field--filled .mdc-floating-label{
+  top:50%!important; transform:translateY(-50%) scale(1)!important;
+  right:16px!important; left:auto!important; pointer-events:none;
+  font-family:$field-ff!important; font-size:$field-fs!important; font-weight:$field-fw!important; color:$field-ink!important;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+/* כשיש ערך / בפוקוס – לוודא שהלייבל עולה בוודאות ולא חופף לטקסט */
+:host ::ng-deep .mdc-floating-label--float-above,
+:host ::ng-deep .mdc-text-field--label-floating .mdc-floating-label{
+  top:0!important;
+  transform: translateY(-36px) scale(.85)!important; /* היה -28px, הוגדל כדי שלא יחפוף לטקסט */
+  opacity: .9;
+}
+
+/* ביטול subscript כדי לשמור גובה זהה */
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper{ display:none!important; height:0!important; margin:0!important; }
+
+/* ===== אייקונים 38×38 ומיקום נכון ===== */
+$icon-box: 38px;
+$icon-inset: 12px;
+
+.cc-suffix{
+  inline-size:$icon-box; block-size:$icon-box;
+  display:flex; align-items:center; justify-content:center;
+  border:1.5px solid #192A4A; border-radius:8px;
+  background:transparent; line-height:0; margin-inline-start:8px;
+}
+:host ::ng-deep .mat-mdc-form-field .mat-mdc-form-field-icon-suffix{ padding-inline-end:$icon-inset !important; }
+.cc-suffix svg{ display:block; }
+
+:host ::ng-deep .cc-select .mat-mdc-select-arrow,
+:host ::ng-deep .cc-select .mat-mdc-select-arrow-wrapper{ display:none!important; }
+
+:host ::ng-deep .cc-date-toggle .mat-mdc-icon-button{
+  width:$icon-box; height:$icon-box; padding:0; display:flex; align-items:center; justify-content:center;
+  border-radius:8px; border:1.5px solid #192A4A;
+}
+:host ::ng-deep .cc-date-toggle .mat-mdc-button-touch-target{ width:$icon-box; height:$icon-box; }
+:host ::ng-deep .cc-date-toggle .mat-mdc-icon-button svg{
+  width:31px!important; height:32.8px!important; stroke:#192A4A!important; fill:none!important; opacity:1!important;
+}
+:host ::ng-deep .cc-date-toggle .mat-mdc-button-persistent-ripple,
+:host ::ng-deep .cc-date-toggle .mat-ripple,
+:host ::ng-deep .cc-date-toggle .mat-mdc-focus-indicator{ display:none!important; }
+
+/* ===== כפתור „שלח טופס” – בגודל של שדה ===== */
+.cta{
+  inline-size:100%;
+  block-size:$form-row-h;
+  padding-inline:24px;
+  border-radius:$field-radius;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  background:#192A4A; color:#F6F6F6; border:0;
+  box-shadow:0 6px 14px rgba(25,42,74,.24);
+  cursor:pointer; transition:transform .15s, opacity .15s, box-shadow .15s;
+}
+.cta:hover{ transform:translateY(-1px); }
+.cta:active{ transform:scale(.98); }
+.cta[disabled]{ opacity:.5; cursor:not-allowed; box-shadow:none; }
+.cta__icon{ display:grid; place-items:center; inline-size:24px; block-size:24px; }
+.cta__text{
+  font-family:"Assistant", Arial, sans-serif;
+  font-size:clamp(18px,1.6vw,22px);
+  font-weight:300;
+  color:#F6F6F6;
+}
+
+/* שורת הסיום: אימות בשמאל (עמודה 1), כפתור בימין (עמודה 2) */
+.form-grid .cc-field--confirm{ grid-column: 1 / 2; }
+.form-grid .cta--form{
+  grid-column: 2 / 3;
+  flex-direction: row-reverse; /* טקסט מימין, חץ משמאל */
+}
+
+/* מובייל – שניהם 100% אחד מתחת לשני */
+@media (max-width:1024px){
+  .form-grid .cc-field--confirm,
+  .form-grid .cta--form{
+    grid-column: 1 / -1;
+  }
+}
+
+/* ===== ביטול צבע אוטופיל בכרום ===== */
+:host ::ng-deep input:-webkit-autofill,
+:host ::ng-deep input:-webkit-autofill:hover,
+:host ::ng-deep input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 1000px #D9D9D9 inset!important;
+  box-shadow:0 0 0 1000px #D9D9D9 inset!important;
+  -webkit-text-fill-color:inherit!important; caret-color:inherit!important;
+  transition:background-color 9999s ease-out 0s!important;
+}

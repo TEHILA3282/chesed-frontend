@@ -1,0 +1,68 @@
+.deposit-freeze-wrapper {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 24px;
+  direction: rtl;
+}
+
+.main-title {
+  text-align: center;
+  font-size: 1.6em;
+  margin-bottom: 24px;
+}
+
+.form-box {
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1em;
+  margin-bottom: 12px;
+  resize: vertical;
+}
+
+.confirm-section {
+  margin-bottom: 20px;
+}
+
+.info-box {
+  background: #4caf50;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}

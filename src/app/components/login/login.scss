@@ -1,0 +1,306 @@
+@use "sass:math";
+
+$brand-blue: #192a4a;
+$card-bg:   #f6f6f6;
+$rows-bg:   #d9d9d9;
+$ink:       #1f2a49;
+
+$card-w: 871px;
+/* 👇 הכרטיס כולו גבוה יותר */
+$card-h: 760px;
+$frame-w: 731px;
+
+/* Vertical guide lines */
+$side-gap: math.div($card-w - $frame-w, 2); /* 70px */
+$vline-from-card-edge: 172px;
+$vline-offset-in-frame: $vline-from-card-edge - $side-gap; /* 102px */
+
+/* Fields typography */
+$field-font-family: "Assistant", system-ui, -apple-system, "Segoe UI", sans-serif;
+$field-font-size: 24px;
+$field-font-weight: 700;
+$field-color: $brand-blue;
+
+$bp-md: 992px;
+$bp-sm: 768px;
+$bp-xs: 480px;
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #fff;
+  color: $ink;
+  direction: rtl;
+}
+
+/* ========= Layout + Global scale ========= */
+.login-page{
+  /* 👇 מצמצם רווח בין ההדר לכרטיס */
+  --header-h: 10px;
+
+  /* גובה שורה וקלט – שליטה גלובלית */
+  --row-box-h: 140px;  /* גובה כל “שורה” במסגרת */
+  --row-h:      66px;  /* גובה האינפוט בפנים */
+
+  /* מרווחים */
+  --safe-gap: 2px;
+  --extra-bottom: 2px;
+
+  /* שטח זמין */
+  --avail-w: calc(100vw - (2 * var(--safe-gap)));
+  --avail-h: calc(100dvh - var(--header-h) - (2 * var(--safe-gap)) - var(--extra-bottom));
+
+  /* כובע לגודל – שליטה מיידית על הקטנה/הגדלה */
+  --scale-cap: 0.82;   /* 0.78 קטן יותר, 0.90 גדול יותר */
+
+  /* גלובל סקל */
+  --scale-w: calc(var(--avail-w) / #{$card-w});
+  --scale-h: calc(var(--avail-h) / #{$card-h});
+  --scale: min(var(--scale-w), var(--scale-h), var(--scale-cap));
+
+  --y-offset: -36px;
+
+  position: fixed;
+  top: var(--header-h);
+  left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* fine tuning לגובה גבוהים מאוד */
+@media (min-height: 920px)  { .login-page { --y-offset: -42px; } }
+@media (min-height: 1040px) { .login-page { --y-offset: -48px; } }
+
+/* Safety net למסכים נמוכים */
+@media (max-height: 720px) { .login-page{ --safe-gap: 14px; --extra-bottom: 8px;  --scale: calc(min(var(--scale-w), var(--scale-h)) * 0.96); } }
+@media (max-height: 640px) { .login-page{ --safe-gap: 10px; --extra-bottom: 4px;  --scale: calc(min(var(--scale-w), var(--scale-h)) * 0.93); } }
+@media (max-height: 600px) { .login-page{ --safe-gap:  8px; --extra-bottom: 2px;  --scale: calc(min(var(--scale-w), var(--scale-h)) * 0.90); } }
+@media (max-height: 560px) { .login-page{ --safe-gap:  6px; --extra-bottom: 0px;  --scale: calc(min(var(--scale-w), var(--scale-h)) * 0.86); } }
+
+/* פס כחול */
+.blue-band{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: clamp(
+    130px,
+    calc(100dvh - var(--header-h) - (#{$card-h} * var(--scale)) - (2 * var(--safe-gap))),
+    420px
+  );
+  background: $brand-blue;
+  z-index: 0;
+}
+
+/* Viewport */
+.login-viewport{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.login-card{
+  width: $card-w;
+  height: $card-h;
+  transform: translateY(var(--y-offset)) scale(var(--scale));
+  transform-origin: center center;
+  will-change: transform;
+
+  background: $card-bg;
+  border: 1px solid $brand-blue;
+  border-radius: 52.5px;
+  padding: 18px 24px 18px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Logo */
+.logo-wrap{ width: 100%; height: 100px; display: grid; place-items: center; margin-bottom: 6px; }
+.gmach-logo{ width: 136px; height: 58px; object-fit: contain; }
+
+/* Title */
+.gmach-title{
+  margin: 0 0 10px;
+  color: $brand-blue;
+  font-weight: 700;
+  font-size: 32px;
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* ========= Fields frame ========= */
+.fields-frame{
+  position: relative;
+  width: clamp(520px, 86vw, $frame-w);
+  /* שני טורים של שורות + קו מפריד באמצע (1px) */
+  height: calc(var(--row-box-h) * 2 + 1px);
+  background: $rows-bg;
+  border: 1px solid rgba(25,42,74,.8);
+  border-radius: 6px;
+  display: grid;
+  grid-template-rows: var(--row-box-h) 1px var(--row-box-h);
+  overflow: visible;
+
+  &::before, &::after{
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    width: 1px; height: 200px; /* תאם לגובה החדש */
+    background: $brand-blue; opacity: .95; z-index: 1; pointer-events: none;
+  }
+  &::before{ right: $vline-offset-in-frame; }
+  &::after { left:  $vline-offset-in-frame; }
+}
+.h-sep{ width: 100%; height: 1px; background: $brand-blue; }
+.row{
+  display: flex;
+  align-items: center;
+  height: var(--row-box-h);
+  padding: 0 16px;
+  gap: 0;
+}
+
+/* ========= Angular Material inputs – גובה/רוחב זהים תמיד ========= */
+::ng-deep .modern-input.mat-mdc-form-field.fullrow,
+::ng-deep .modern-input.mat-mdc-form-field {
+  /* שני שדות בשורה מתחלקים שווה בשווה */
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+::ng-deep .modern-input.mat-mdc-form-field.fullrow{
+  .mat-mdc-form-field-subscript-wrapper{ display:none !important; }
+  .mdc-line-ripple, .mat-mdc-form-field-focus-overlay, .mdc-notched-outline{ display:none !important; }
+
+  .mat-mdc-text-field-wrapper, .mdc-text-field{
+    background:transparent !important; padding:0 !important; border:0 !important; border-radius:0 !important;
+  }
+
+  .mat-mdc-form-field-infix{
+    padding:0 !important; min-height:auto !important; border:0 !important;
+    display:flex; align-items:center; width:100%;
+  }
+
+  /* גובה/יישור של כל השדות */
+  .mat-mdc-form-field-flex{ align-items:center; min-height:var(--row-h); height:var(--row-h); gap:10px; }
+  .mat-mdc-input-element{
+    background:transparent !important; border:none !important; outline:none !important;
+    width:100%; height:var(--row-h); line-height:var(--row-h);
+    text-align:right; color:$field-color;
+    font-family:$field-font-family; font-size:$field-font-size; font-weight:$field-font-weight;
+    padding: 0 4px;
+    appearance: textfield;
+    -moz-appearance: textfield; /* תמיכה ב-FF ישנים */
+    &::-webkit-outer-spin-button,&::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+  }
+  .mat-mdc-input-element::placeholder{
+    color:$field-color; opacity:1; font-family:$field-font-family; font-size:$field-font-size; font-weight:$field-font-weight; text-align:right;
+  }
+  .mat-mdc-form-field-icon-suffix{
+    flex: 0 0 40px; display:flex; align-items:center; justify-content:center; margin-inline-start:8px;
+  }
+}
+
+/* ========= Buttons & texts ========= */
+.login-btn{
+  width: 220px; height: 46px; border-radius: 24px; margin-top: 18px;
+  background:#fff; border:1px solid $brand-blue; color:$brand-blue;
+  font-weight:600; transition: background .2s, color .2s;
+  &:hover{ background:$brand-blue; color:#fff; }
+  &:disabled{ opacity:.55; cursor:not-allowed; }
+}
+.sub{ margin-top:12px; color:$brand-blue;
+  a{ color:$brand-blue; text-decoration:underline; font-weight:600; }
+}
+.forgot{ width:$frame-w; text-align:center; margin-top:6px; button{ color:$brand-blue; } }
+.error-message{ color:$brand-blue; font-weight:700; text-align:center; margin-top:6px; }
+
+/* Typography vars */
+:root{
+  --btn-text-size: clamp(18px, 2.0vw, 22px);
+  --below-text-size: clamp(16px, 1.8vw, 20px);
+  --below-link-weight: 700;
+}
+.login-btn{ font-size: var(--btn-text-size);   line-height: 1.15; }
+.sub      { font-size: var(--below-text-size); line-height: 1.35; }
+.sub a    { font-size: inherit; font-weight: var(--below-link-weight); }
+.forgot button, .error-message{ font-size: var(--below-text-size); line-height: 1.35; }
+
+/* ========= Medium ========= */
+@media (max-width: $bp-md) and (min-width: $bp-sm) {
+  .gmach-title { font-size: 30px; }
+  ::ng-deep .modern-input .mat-mdc-input-element{ font-size: 22px; }
+}
+
+/* ========= Mobile / Low screens ========= */
+@media (max-width: $bp-sm), (max-height: 720px) {
+  .login-card{ border-radius: 40px; }
+  .gmach-title{ font-size: clamp(22px, 5.3vw, 28px); margin-bottom: 8px; }
+
+  /* הקטנה פרופורציונלית של גובהי השורה והאינפוט */
+  .login-page{ --row-box-h: 116px; --row-h: 56px; }
+
+  .fields-frame{
+    width: min(560px, 86vw);
+    border-radius: 8px;
+    height: calc(var(--row-box-h) * 2 + 1px);
+    grid-template-rows: var(--row-box-h) 1px var(--row-box-h);
+  }
+  .row{ height: var(--row-box-h); }
+
+  :root{ --suffix-w: 36px; }
+  ::ng-deep .modern-input.mat-mdc-form-field.fullrow{
+    .mat-mdc-form-field-infix{ display:grid !important; grid-template-columns: 1fr var(--suffix-w) !important; align-items:center; width:100%; }
+    .mat-mdc-input-element{ font-size:20px; height:var(--row-h); line-height:var(--row-h); padding-inline:12px; }
+    .mat-mdc-form-field-icon-suffix{
+      width: var(--suffix-w) !important; justify-self:end;
+      display:flex; align-items:center; justify-content:center;
+      margin-inline-start: 8px; flex: 0 0 var(--suffix-w) !important;
+    }
+  }
+
+  .login-btn{ width: min(320px, 72vw); height: 44px; border-radius: 999px; }
+  .sub{ font-size: clamp(14px, 3.8vw, 16px); }
+  .forgot{ width: 100%; }
+}
+
+/* ========= Scroll Mode (אין גלילה כפולה) ========= */
+@media (max-height: 820px), (max-width: 680px) {
+  html, body{ height:auto !important; overflow-y:auto !important; }
+
+  .login-page{
+    position: relative;
+    top: var(--header-h); bottom: auto;
+    height: auto; min-height: 0; overflow: visible !important;
+
+    --safe-gap: 16px;
+    --y-offset: 0;                /* במצב גלילה לא מרימים */
+    --scale: var(--scale-cap);    /* לא 1 – שומר הקטנה גם בגלילה */
+    --blue-h: 160px;
+  }
+
+  .login-viewport{
+    position: relative; inset: auto; display: block;
+    padding-top: var(--safe-gap);
+    padding-bottom: calc(var(--safe-gap) + var(--blue-h));
+    overflow: visible !important;
+  }
+
+  .login-card{ transform:none !important; transform: scale(var(--scale)) !important; width: min(92vw, #{$card-w}); margin-inline:auto; }
+  .blue-band{ position: fixed; left: 0; right: 0; bottom: 0; height: 300px; background: $brand-blue; z-index: 0; }
+}
+
+@media (max-width: $bp-xs) { .fields-frame{ width: 92vw; } }
+
+/* ========= אופציונלי: הקטנה מדורגת לפי רוחב ========= */
+@media (max-width: 1200px){ .login-page{ --scale-cap: 0.80; } }
+@media (max-width:  992px){ .login-page{ --scale-cap: 0.78; } }
+@media (max-width:  768px){ .login-page{ --scale-cap: 0.74; } }

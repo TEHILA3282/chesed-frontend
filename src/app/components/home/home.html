@@ -1,0 +1,69 @@
+<div class="home-container" dir="rtl">
+  <div class="blue-band"></div>
+
+  <main class="main">
+    <section class="brand" [attr.aria-label]="'לוגו ' + institution.name">
+      <img
+        [src]="logoUrl"
+        [alt]="institution.name"
+        class="brand__icon"
+        width="56"
+        height="56"
+        decoding="async"
+        loading="eager"
+      />
+    </section>
+
+    <section class="home-main-wrapper">
+      <div class="top-bar-container">
+        <div class="info-box info-box--band" [routerLink]="'/info'" aria-label="חשוב לדעת">
+          <div class="info-body">
+            <h3 class="info-title">חשוב לדעת</h3>
+          </div>
+          <div class="info-footer info-footer--band">
+            הסבר בנקודות – איך פועלת הקופה
+          </div>
+        </div>
+
+        <div class="info-box info-box--primary"
+             [routerLink]="institutionService.link(['programs'])"
+             [attr.aria-label]="institutionService.getInstitution().programsTitle || 'תוכניות ושותפים'">
+          <div class="info-body">
+            <h3 class="info-title">
+              {{ institutionService.getInstitution().programsTitle || 'תוכניות ושותפים' }}
+            </h3>
+            <div class="info-sub info-sub--primary">
+              {{ institutionService.getInstitution().programsSubtitle || 'תכניות, הפקדות ושותפים' }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="info-box info-box--band"
+          role="button"
+          tabindex="0"
+          aria-label="יצירת קשר"
+          (click)="openContact()"
+          (keyup.enter)="openContact()"
+          (keyup.space)="openContact()"
+        >
+          <div class="info-body">
+            <h3 class="info-title">יצירת קשר</h3>
+          </div>
+          <div class="info-footer info-footer--band">
+            תוכלו לקבל גם מענה אישי דרך הטלפון
+          </div>
+        </div>
+      </div>
+      <div class="search-band__container">
+        <app-global-search></app-global-search>
+      </div>
+    </section>
+  </main>
+
+  <div class="made-by-inline" aria-label="מופעל על ידי חפץ חסד">
+    <span class="madeby__label"><span>מופעל</span><span>על ידי</span></span>
+    <span class="madeby__divider" aria-hidden="true"></span>
+    <img src="/assets/hafetzLogo.png" alt="חפץ חסד" class="madeby__logo" />
+  </div>
+</div>

@@ -1,0 +1,122 @@
+/* ===== משתנים ===== */
+$ink:        #192A4A;
+$page-bg:    #f4f4f4;
+$band-bg:    #192A4A;
+$pill-bg:    #d9d9d9;
+$pill-onband:#f6f6f6;
+$radius-pill: 40px;
+
+/* ===== בסיס ===== */
+.actions-page {
+  position: relative;          /* נדרש לקו הדינמי */
+  background: $page-bg;
+  min-height: 100dvh;
+  overflow-x: clip;
+  font-family: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+.actions-shell {
+  max-width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 24px 16px 0;
+}
+
+/* ===== פריסה עליונה ===== */
+.top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 72px); /* מרחיק את הגרפים מהטקסטים */
+  @media (max-width: 1000px) { grid-template-columns: 1fr; }
+}
+
+/* גרפים */
+.charts { display: grid; place-items: center; padding-inline-start: clamp(24px, 4vw, 56px);
+  .chart { width: min(520px, 100%); display: block; }
+}
+
+/* ===== כותרות – ללא קו תחתיהן ===== */
+.section-title {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 18px;
+  color: $ink;
+  font-weight: 800;
+  font-size: clamp(20px, 2.2vw, 24px);
+  line-height: 1;
+  padding-inline-end: 8px; /* הזחה קלה פנימה, לא תלוי בקו */
+  &::after { display: none !important; }
+}
+.section-title--on-band { color: #fff; &::after { display: none !important; } }
+
+/* ===== הקווים הדינמיים ===== */
+.gap-line { position: absolute; width: 2px; pointer-events: none; }
+.gap-line--blue  { background: $ink; }
+.gap-line--white { background: #fff; }
+
+/* ===== רשימת “כדורים” ===== */
+.pill-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.pill {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  background: $pill-bg;
+  border-radius: $radius-pill;
+  color: $ink;
+  box-shadow: 0 0 0 1px rgba($ink, .06);
+
+  .mark {
+    order: -1;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    background: $ink;
+    flex: 0 0 10px;
+    margin-inline-end: 8px;
+  }
+  .txt {
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+  }
+}
+
+.pill--on-band {
+  background: $pill-onband;
+  color: #0f1830;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+}
+
+/* הקוביות של פעולות אחרונות – תמיד כחולות */
+.mark--force-blue { background: $ink !important; }
+
+/* ===== הפס הכחול ===== */
+.band {
+  width: 100%;
+  background: $band-bg;
+  margin-top: clamp(28px, 4vh, 40px);
+  padding: 28px 0 40px;
+}
+.band__inner {
+  max-width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 0 16px;
+  overflow: visible;
+}
+
+/* ===== כפתור עוד/פחות ===== */
+.more-btn {
+  margin: 18px auto 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: clamp(140px, 20vw, 220px); height: 40px;
+  border-radius: $radius-pill;
+  border: 1px solid rgba(255,255,255,.5);
+  background: transparent; color: #fff; font-weight: 700; cursor: pointer;
+  transition: transform .08s ease, background .12s ease;
+
+  &:hover { transform: translateY(-1px); background: rgba(255,255,255,.08); }
+  &:active { transform: translateY(0); }
+}
+
+/* מניעת גלילה אופקית */
+html, body { overflow-x: clip; }

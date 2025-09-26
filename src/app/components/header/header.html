@@ -1,0 +1,45 @@
+<header class="header-wrap" role="banner">
+  <div class="header-shell">
+    <!-- ימין: התחברות/התנתקות -->
+    <div class="auth-section">
+      <ng-container *ngIf="!isLoggedIn; else loggedIn">
+        <a routerLink="/login">כניסה</a>
+        <span class="sep" aria-hidden="true">|</span>
+        <a routerLink="/register">הרשמה</a>
+      </ng-container>
+
+      <ng-template #loggedIn>
+        <span class="hello">שלום, {{ userName }}</span>
+        <span class="sep" aria-hidden="true">|</span>
+        <a href="" (click)="logout($event)">התנתקות</a>
+      </ng-template>
+    </div>
+
+    <!-- ניווט ראשי: רק הדף הנוכחי מודגש -->
+    <nav class="nav-links" aria-label="ניווט ראשי">
+      <a routerLink="/"
+         routerLinkActive="active"
+         #rlaHome="routerLinkActive"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.aria-current]="rlaHome.isActive ? 'page' : null">ראשי</a>
+
+      <a routerLink="/account"
+         routerLinkActive="active"
+         #rlaAcc="routerLinkActive"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.aria-current]="rlaAcc.isActive ? 'page' : null">מצב החשבון</a>
+
+      <a routerLink="/performing-actions"
+         routerLinkActive="active"
+         #rlaAct="routerLinkActive"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.aria-current]="rlaAct.isActive ? 'page' : null">ביצוע פעולות</a>
+
+      <a routerLink="/messages"
+         routerLinkActive="active"
+         #rlaMsg="routerLinkActive"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.aria-current]="rlaMsg.isActive ? 'page' : null">תיבת הודעות</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,26 @@
+<div class="actions-container">
+  <h2 class="title">בחרו סוג הפקדה</h2>
+  <p class="subtitle">בחרו את סוג ההפקדה הרצוי שברצונכם לבצע</p>
+  <ng-container *ngIf="depositTypes.length > 0">
+    <div class="cards">
+      <div
+        class="card"
+        *ngFor="let deposit of depositTypes"
+        (click)="goToDeposit(deposit)"
+      >
+        <h3>{{ deposit.name }}</h3>
+        <p>{{ deposit.description }}</p>
+        <button class="circle-btn"><span class="arrow">⬅</span></button>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <div *ngIf="!isLoading && depositTypes.length === 0" class="no-results">
+    לא נמצאו סוגי הפקדות זמינים
+  </div>
+
+  <div *ngIf="isLoading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

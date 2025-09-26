@@ -1,0 +1,26 @@
+<div class="actions-container">
+  <h2 class="title">ביצוע פעולות</h2>
+  <p class="subtitle">בחרו את הפעולה הרצויה שברצונכם לבצע</p>
+
+  <div class="cards">
+    <div class="card" (click)="navigateTo('loans-list')">
+      <h3>הלוואות</h3>
+      <p>פעולות בהלוואות בקשות, שטרי חוב, ערבים, הקפאות ועוד</p>
+      <button><span class="arrow">⬅</span></button>
+    </div>
+
+    <div class="card" (click)="navigateTo('deposits')">
+      <h3>הפקדות</h3>
+      <p>פעולות בהפקדות הפקדות, חסכונות משיכות, תכנית נישואי הילדים ועוד</p>
+      <button><span class="arrow">⬅</span></button>
+    </div>
+
+    <div class="card" (click)="navigateTo('update-details')">
+      <h3>עדכון פרטים</h3>
+      <p>עדכון פרטים אישיים ופרטי חשבון בנק ועוד</p>
+      <button><span class="arrow">⬅</span></button>
+    </div>
+
+   
+  </div>
+</div>

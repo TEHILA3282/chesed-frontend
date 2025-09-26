@@ -1,0 +1,62 @@
+<div class="login-page" dir="rtl">
+  <!-- פס כחול מותאם-גובה -->
+  <div class="blue-band" aria-hidden="true"></div>
+
+  <div class="login-viewport">
+    <form class="login-card" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="on">
+      <div class="logo-wrap">
+        <img [src]="getLogoPath()" alt="לוגו הגמ&quot;ח" class="gmach-logo" />
+      </div>
+
+
+      <div class="fields-frame">
+        <div class="row">
+          <mat-form-field class="modern-input fullrow" appearance="fill">
+            <input
+              matInput
+              formControlName="emailOrId"
+              placeholder="הקלד/י דוא״ל / ת״ז"
+              autocomplete="username email"
+            />
+          </mat-form-field>
+        </div>
+
+        <span class="h-sep" aria-hidden="true"></span>
+
+        <div class="row">
+          <mat-form-field class="modern-input fullrow" appearance="fill">
+            <input
+              matInput
+              [type]="hide ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="סיסמא"
+              autocomplete="current-password"
+            />
+            <button mat-icon-button matSuffix type="button"
+                    (click)="hide = !hide" aria-label="הצג/הסתר סיסמא">
+              <mat-icon>{{ hide ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <button class="login-btn"
+              mat-raised-button
+              type="submit"
+              [disabled]="loading || form.invalid">
+        כניסה
+      </button>
+
+      <div class="sub">
+        משתמש חדש?
+        <a routerLink="/register">להרשמה לחץ כאן</a>
+      </div>
+
+      <div class="forgot">
+        <button mat-button type="button" (click)="openForgotPassword()">שכחתי סיסמא</button>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+    </form>
+  </div>
+</div>

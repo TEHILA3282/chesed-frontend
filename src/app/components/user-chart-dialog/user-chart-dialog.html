@@ -1,0 +1,17 @@
+<div class="chart-container">
+  <h3>התפלגות פעולות של {{ fullName }}</h3>
+
+  <ng-container *ngIf="isDataReady && hasData; else noData">
+    <div class="chart-wrapper">
+      <canvas baseChart
+        [data]="doughnutChartData"
+        [type]="'doughnut'"
+        [options]="chartOptions">
+      </canvas>
+    </div>
+  </ng-container>
+
+  <ng-template #noData>
+    <p>אין נתונים להצגה</p>
+  </ng-template>
+</div>

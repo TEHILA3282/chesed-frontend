@@ -1,0 +1,20 @@
+<div class="deposit-freeze-wrapper">
+  <h2 class="main-title">בקשה להקפאת תשלומי הפקדה</h2>
+  <div class="form-box">
+    <label class="subtitle">מבקש מהנהלת הגמ"ח להקפיא תשלומי הפקדה</label>
+    <textarea [(ngModel)]="requestText" rows="5" placeholder="כתוב ופרט את בקשתך להקפאת תשלומים *"></textarea>
+  </div>
+  <div class="confirm-section">
+    <label>ידוע לי כי:</label>
+    <div class="info-box">
+      <input type="checkbox" [(ngModel)]="isConfirmed" id="confirm" />
+      <label for="confirm">
+       בקשה זו נשלחה 3 ימים קודם יום החיוב. ובאם לא, הרי שאין הקופה אחראית לבקשה זו היות והקפאת שלומים מבוצעים עד 3 ימים ממועד התשלום. 
+       (במקרה ונוכל לממש את הבקשה נודיע על כך בהודעה חוזרת)
+      </label>
+    </div>
+  </div>
+  <button [disabled]="!isConfirmed || !requestText" (click)="onSubmit()" class="submit-btn">
+    שליחת בקשה לאישור
+  </button>
+</div>

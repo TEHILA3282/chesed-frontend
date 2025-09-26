@@ -1,0 +1,13 @@
+<div class="mini-charts" dir="rtl">
+  <div class="mini" *ngFor="let c of minis">
+    <div class="donut">
+      <canvas
+        baseChart
+        [type]="'doughnut'"
+        [data]="c.data"
+        [options]="miniOptions">
+      </canvas>
+    </div>
+    <div class="caption">{{ c.label }}</div>
+  </div>
+</div>

@@ -1,0 +1,218 @@
+/* =========================
+   messages-box.component.scss – CENTERED & CLEAN
+   ========================= */
+
+/* התאימי לגובה ההדר בפועל אצלך */
+:root { --header-h: 96px; }
+
+$brand-blue:   #192A4A;
+
+/* מידות בועה */
+$pill-w:        560px;
+$pill-h:        62px;
+$pill-radius:   31px;
+
+/* רווח בין העמודות + שמירת שוליים ליד הפס האמצעי */
+$col-gap:       64px;   /* רווח בין ימין לשמאל */
+$mid-pad:       28px;   /* ריווח פנימי מכל צד של הפס */
+
+$row-gap:       12px;
+
+/* כותרות */
+$title-fs:      35px;
+$title-lh:      46px;
+$title-bar-w:   24px;
+
+/* badge קטן */
+$badge-size:    12px;
+$badge-radius:  3px;
+$badge-color:   $brand-blue;
+
+/* פס כחול בתחתית */
+$blue-band-h:   300px;
+
+.messages-page{
+  position: relative;
+  height: calc(100vh - var(--header-h));
+  background: #fff;
+  overflow: hidden; /* אין גלילה לכל הדף */
+  font-family: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* פס כחול קבוע בתחתית */
+.blue-band{
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  height: $blue-band-h;
+  background: $brand-blue;
+  z-index: 0;
+}
+
+/* מעטפת התוכן – סימטרית סביב 50% מדויק */
+.messages-shell{
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+
+  height: 100%;
+
+  /* נוסיף את ה-mid-pad משני הצדדים כדי שהרוחב הכולל יכלול את הריווח סביב הפס */
+  max-width: calc(#{$pill-w} * 2 + #{$col-gap} + #{$mid-pad} * 2);
+  margin: 0 auto;
+
+  padding: 24px 20px 96px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: $col-gap;
+  row-gap: $row-gap;
+  align-items: start;
+
+  /* הפס האמצעי – באמצע, מאחורי הכל */
+  &::before{
+    content: "";
+    position: absolute;
+    inset-inline-start: 50%;
+    transform: translateX(-0.5px);
+    width: 1px;
+    top: 24px;
+    bottom: 96px;
+    background: $brand-blue;
+    z-index: 0;          /* מאחורי התוכן */
+    pointer-events: none;
+  }
+}
+
+/* כבר לא משתמשים באלמנט guide */
+.guide{ display:none; }
+
+/* כותרות */
+.section-title{
+  font-family: 'Assistant','Heebo',sans-serif;
+  font-weight: 800;
+  font-size: $title-fs;
+  line-height: $title-lh;
+  color: $brand-blue;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 8px;
+
+  .title-bar{
+    display: inline-block;
+    inline-size: $title-bar-w;
+    block-size: 4px;
+    background: $brand-blue;
+    border-radius: 2px;
+    margin-inline-start: 8px;
+  }
+}
+
+/* עמודות – שמירת ריווח סימטרי מהפס (mid-pad) + יישור בועות */
+.col{
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  row-gap: $row-gap;
+  min-height: 0;
+}
+
+.col--right{
+  grid-column: 1;
+  justify-items: end;                 /* הבועות נצמדות לבפנים (לפס) */
+  padding-inline-end: $mid-pad;       /* ריווח קבוע מהפס */
+}
+
+.col--left{
+  grid-column: 2;
+  justify-items: start;               /* הבועות נצמדות לבפנים (לפס) */
+  padding-inline-start: $mid-pad;     /* ריווח קבוע מהפס */
+}
+
+/* הרשימות – גלילה רק אם יש הרבה הודעות */
+.list{
+  max-height: 100%;
+  overflow: auto;
+  display: grid;
+  gap: $row-gap;
+  padding-inline: 2px;
+}
+
+/* בועות הודעה – מעל הפס וזזות ממנו ע"י ה-padding של העמודות */
+.msg-pill{
+  inline-size: $pill-w;
+  block-size:  $pill-h;
+  border-radius: $pill-radius;
+
+  position: relative;
+  z-index: 1;                         /* מעל הפס האמצעי */
+
+  direction: rtl;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 10px;
+
+  padding: 10px 16px;
+  background: #ECEFF3;
+  border: 1px solid rgba(25,42,74,.10);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.02),
+    0 4px 12px rgba(25,42,74,.05);
+
+  .dot{
+    inline-size: $badge-size;
+    block-size:  $badge-size;
+    border-radius: $badge-radius;
+    background: $badge-color;
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,.80),
+      0 1px 2px rgba(0,0,0,.10);
+    flex: 0 0 auto;
+  }
+
+  .text{
+    font-family: 'Heebo',sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: #2a2f3a;
+    text-align: right;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+}
+
+/* חשיבות */
+.bold  { .text{ font-weight: 800; } }
+.red   { .text{ color:#B92A2A; font-weight:700; } }
+.blue  { .text{ color:#1B5BBE; font-weight:700; } }
+.green { .text{ color:#2E7D32; font-weight:700; } }
+
+/* רספונסיביות */
+@media (max-width: 1440px){
+  .messages-shell{ max-width: calc(100% - 40px); }
+  .msg-pill{ inline-size: 100%; }
+}
+@media (max-width: 980px){
+  .messages-shell{
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+  .col--right, .col--left{
+    grid-column: 1;
+    justify-items: stretch;
+    padding-inline: 0;
+  }
+}

@@ -1,0 +1,133 @@
+/* קבועים מתוך שפת העיצוב שלך */
+$brand-blue: #192a4a;
+$ink: #1f2a49;
+$surface: #ffffff;
+$muted: #f6f7fb;
+$shadow: 0 4px 14px rgba(0,0,0,.08);
+$radius-lg: 20px;
+$radius-md: 14px;
+$band-h: clamp(170px, 22vh, 260px); /* גובה הפס הכחול */
+
+:host { display:block; }
+
+/* מעטפת עמוד עם פס כחול צמוד לתחתית */
+.promo-page {
+  position: relative;
+  min-height: 100dvh;
+  background: $surface;
+  overflow-x: clip; /* אין גלילה אופקית */
+}
+
+.blue-band {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 300px;
+  background: $brand-blue;
+  z-index: 0;
+}
+
+/* קוביית תוכן לבנה שיושבת מעל הפס */
+.promo-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: clamp(16px, 2.5vw, 28px) auto clamp(20px, 3vw, 40px);
+  padding: clamp(20px, 3vw, 32px);
+  background: $surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow;
+}
+
+.promo-header { text-align: center; margin-bottom: clamp(14px, 2.5vw, 22px); }
+.promo-title  { margin: 0 0 6px; font-weight: 800; font-size: clamp(22px,2.4vw,28px); color: $brand-blue; }
+.promo-sub    { margin: 0; color: rgba(0,0,0,.6); font-size: clamp(14px,1.4vw,16px); }
+
+/* גריד כרטיסים */
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: clamp(12px, 2vw, 18px);
+}
+
+/* כרטיס פרסומת */
+.card {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(25,42,74,.12);
+  border-radius: $radius-md;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__badge {
+    position: absolute;
+    top: 10px; inset-inline-start: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 999px;
+    color: #fff;
+    background: $brand-blue;
+
+    &.badge--pdf   { background: linear-gradient(180deg, #e74c3c, #c0392b); }
+    &.badge--video { background: linear-gradient(180deg, #2980b9, #1f5f8f); }
+  }
+
+  &__preview {
+    background: $muted;
+    border-radius: 12px;
+    min-height: 150px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  &__title { margin: 0; font-weight: 700; color: $ink; font-size: 18px; }
+  &__blurb { margin: 0; color: rgba(0,0,0,.65); font-size: 14px; }
+  &__actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+}
+
+/* תצוגות מקדימות */
+.preview__img { width: 100%; height: auto; display: block; }
+.preview__icon {
+  width: 48px; height: 58px; border-radius: 6px; position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  &--pdf   { background: linear-gradient(180deg, #e74c3c, #c0392b); }
+  &::after { content:''; position:absolute; top:0; inset-inline-start:0; width:12px; height:12px;
+             background:#fff; opacity:.55; clip-path: polygon(0 0, 100% 0, 0 100%); }
+}
+.preview__video {
+  position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden;
+  iframe { position:absolute; inset:0; width:100%; height:100%; border:0; background:#000; }
+}
+
+/* כפתורים */
+.btn {
+  appearance: none; border: 1px solid transparent; border-radius: 999px;
+  padding: 8px 14px; font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none;
+  &--primary { color:#fff; background:$brand-blue; &:hover { filter: brightness(1.05); } }
+  &--ghost   { background:transparent; border-color: rgba(25,42,74,.25); color:$brand-blue;
+               &:hover { background: rgba(25,42,74,.06); } }
+}
+
+/* תצוגה מהירה של PDF */
+.quickview {
+  margin-inline-start: auto;
+  summary { list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+
+  &__panel {
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid rgba(25,42,74,.12);
+    border-radius: 12px;
+    padding: 6px;
+  }
+  &__pdf {
+    width: 100%;
+    height: min(70vh, 680px);
+    border: 0;
+  }
+}

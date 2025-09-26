@@ -1,0 +1,330 @@
+@use "sass:math";
+
+/* =========================
+   HOME – Layout נעול + טיפוגרפיה לפי פיגמה
+   ========================= */
+
+/* פונט ברירת מחדל */
+$ff: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+/* צבעים/מידות – דסקטופ קבוע */
+$brand-blue: #192A4A;
+
+$container-w: 1100px;   /* רוחב הקונטיינר של 3 הכרטיסים */
+$card-w: 340px;         /* רוחב כרטיס */
+$card-h: 160px;         /* גובה כרטיס */
+$gap: 20px;             /* ריווח בין כרטיסים */
+
+$band-height: 320px;    /* גובה ה-blue band */
+$band-footer-h: 60px;   /* גובה פס תחתון בכרטיסי band */
+$band-radius: 46px;
+
+$search-w: 1040px;      /* רוחב שורת החיפוש בדסקטופ */
+$search-h: 96px;        /* גובה שורת החיפוש בדסקטופ */
+$search-inset: 8px;     /* כמה להרים מעל שפת ה-blue band */
+
+/* ===== משתני :root ===== */
+:root{ --header-h: 56px; }
+
+/* ===== בסיס דף ===== */
+html, body{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: $ff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+*, *::before, *::after{ box-sizing: border-box; }
+
+/* ===== מעטפת הדף ===== */
+.home-container{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+
+  min-height: calc(100svh - var(--header-h));
+  padding-top: var(--header-h);
+
+  /* ❌ לא צריך ריפוד תחתון – זה מה שעשה את הגלילה */
+  padding-bottom: 0;
+}
+
+/* ===== Blue band קבוע בגובה/מיקום ===== */
+.blue-band{
+  position: fixed;
+  inset: auto 0 0 0;
+  height: $band-height;
+  background: $brand-blue;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== Main ===== */
+.main{
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  row-gap: 10px;
+}
+
+/* ===== Brand / לוגו ===== */
+.brand{
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  row-gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+.brand__icon{ width: 120px; height: 120px; object-fit: contain; }
+.brand__name{
+  margin: 0;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.08;
+  text-align: center;
+}
+
+/* ===== אזור התוכן המרכזי ===== */
+.home-main-wrapper{
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin: 0;
+}
+
+/* ===== קונטיינר הכרטיסים – נעול ===== */
+.top-bar-container{
+  width: $container-w;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(3, $card-w);
+  justify-content: center;
+  gap: $gap;
+}
+
+/* ===== כרטיס בסיס ===== */
+.info-box{
+  width: $card-w;
+  height: $card-h;
+  border-radius: 20px;
+  border: 1px solid rgba(25,42,74,.20);
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr auto;    /* גוף + פוטר (אם יש) */
+  cursor: pointer;
+}
+
+.info-body{
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 14px;
+  text-align: center;
+  max-width: 88%;
+  margin-inline: auto;
+
+  .icon{ font-size: 24px; color: #453333; }
+  .info-sub{
+    font-family: $ff;
+    font-weight: 400;
+    font-size: 14.5px;
+    color: #666;
+    line-height: 1.32;
+    letter-spacing: 0;
+  }
+}
+
+/* כותרות – אותו גודל לכולן */
+.info-box .info-title{
+  margin: 0;
+  font-family: $ff;
+  font-size: 26px;
+  line-height: 1.06;
+  letter-spacing: .2px;
+  text-align: center;
+}
+
+/* ===== כרטיסי Band (צדדים) – הוחזר ה-band הכחול ===== */
+.info-box--band{
+  position: relative;
+  border-radius: $band-radius;
+  border: 1px solid rgba(25,42,74,.9);
+  grid-template-rows: calc(#{$card-h} - #{$band-footer-h}) $band-footer-h;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+
+  /* ✅ יוצר את הפס הכחול התחתון */
+  &::before{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: $band-footer-h;
+    background: $brand-blue;
+    border-radius: inherit;
+    z-index: 0;
+    transition: height .45s cubic-bezier(.22,.61,.36,1);
+  }
+
+  /* שומרים שהתוכן יהיה מעל ה-band */
+  .info-body, .info-footer--band{ position: relative; z-index: 1; }
+
+  .info-title{
+    font-weight: 700; /* Bold */
+    color: $brand-blue;
+    transition: color .35s ease;
+  }
+
+  .info-footer--band{
+    height: $band-footer-h;
+    background: transparent;
+    color: #fff;
+    display: grid; place-items: center;
+    padding: 0 14px;
+    font-family: $ff;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.28;
+    border-top: 1px solid rgba(25,42,74,.06);
+    transition: color .35s ease, border-color .35s ease;
+  }
+}
+
+/* מצב ריחוף: כל הכרטיס מתמלא כחול */
+.info-box--band:hover,
+.info-box--band:focus-within{
+  border-color: $brand-blue;
+  &::before{ height: 100%; }
+  .info-title{ color: #fff; }
+  .info-body .info-sub{ color: rgba(255,255,255,.92); }
+  .info-footer--band{ border-top-color: transparent; color: #fff; }
+}
+
+/* ===== כרטיס אמצעי (Primary) ===== */
+.info-box--primary{
+  position: relative;
+  overflow: hidden;
+  background: #0F2343;
+  color: #fff;
+  border-color: transparent;
+  border-radius: 40px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.16);
+
+  .info-body{ position: relative; z-index: 1; }
+  .info-title{
+    font-weight: 800;   /* ExtraBold */
+    color: #fff;
+  }
+  .info-sub--primary{
+    font-family: $ff;
+    font-weight: 300;   /* Light */
+    font-size: 18.05px; /* ~18.03 */
+    line-height: 1.32;
+    letter-spacing: 0;
+    color: #F8F7F3;
+  }
+
+  &::before{
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(255,255,255,.08), transparent 60%);
+    opacity: 0; transition: opacity .4s ease; z-index: 0;
+  }
+  &:hover::before, &:focus-within::before{ opacity: 1; }
+}
+
+/* =========================
+   Search bar anchored to blue band
+   ========================= */
+.search-band__container{
+  inline-size: $search-w;     /* 1040px */
+  block-size: $search-h;      /* 96px */
+  border-radius: 48px;
+  background: #F6F6F6 !important;
+  box-shadow: 0 6px 22px rgba(0,0,0,.12) !important;
+
+  /* עיגון קבוע ל-blue band */
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(#{$band-height} - #{$search-h} - #{$search-inset});
+  z-index: 20;
+  display: grid;
+  place-items: center;
+}
+
+/* טיפוגרפיה לחיפוש */
+.search-band__container input,
+.search-band__container textarea{ font-family: $ff; }
+.search-band__container ::placeholder{
+  font-family: $ff;
+  font-weight: 200;   /* ExtraLight */
+  font-size: 26px;    /* ~25.99 */
+  line-height: 1.1;
+  letter-spacing: 0;
+  color: #1924AA;
+}
+.search-band__container .search-wrapper button{
+  box-shadow: 0 6px 18px rgba(0,0,0,.18), 0 0 0 6px #F6F6F6 !important;
+}
+
+/* ===== “מופעל על ידי” ===== */
+.made-by-inline{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  direction: rtl;
+  white-space: nowrap;
+  color: #fff;
+  font-family: $ff;
+}
+.madeby__logo{
+  width: 62px; height: 62px; border-radius: 50%; object-fit: contain;
+  background: #fff; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+.madeby__divider{ width: 1px; height: 34px; background: #fff; }
+.madeby__label{ display: flex; flex-direction: column; font-weight: 800; font-size: 16px; line-height: 1; }
+
+/* ===== רספונסיביות מינימלית – בלי קפיצות ===== */
+
+/* Tablet: שתי עמודות קבועות */
+@media (max-width: 1200px){
+  .top-bar-container{
+    width: calc(2 * #{$card-w} + #{$gap});
+    grid-template-columns: repeat(2, $card-w);
+  }
+}
+
+/* Mobile: עמודה אחת קבועה */
+@media (max-width: 720px){
+  .top-bar-container{
+    width: $card-w;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .search-band__container{
+    inline-size: $card-w;   /* 340px */
+    block-size: 88px;
+    border-radius: 44px;
+
+  
+    bottom: calc(#{$band-height} - 88px - #{$search-inset});
+  }
+
+  .made-by-inline{ display: none; }
+}

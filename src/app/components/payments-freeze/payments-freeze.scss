@@ -1,0 +1,65 @@
+:host { display: block; }
+
+.freeze-page {
+  margin-top: 30px;   
+  display: grid;
+  justify-items: center;
+  padding-block: 16px 8px;
+  box-sizing: border-box;
+}
+
+.main-title {
+  font-size: 34px;
+  font-weight: 800;
+  text-align: center;
+  margin: 4px 0 5px;
+}
+.subtitle {
+  text-align: center;
+  color: #5d5d5d;
+  margin-bottom: 20px;
+}
+
+.freeze-form {
+  width: min(980px, 92vw);
+  display: grid;
+  gap: 16px;
+  justify-items: center; 
+  box-shadow: 0 2px 8px  rgb(69, 51, 51);
+  margin: 1rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px; 
+}
+
+.full {
+  width: 100%;
+  max-width: 720px;
+}
+
+.ack-box {
+  width: 100%;
+  max-width: 720px;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f6f3d6; 
+  color: #333;
+
+  :host ::ng-deep .mat-mdc-checkbox .mdc-form-field label {
+    color: inherit;
+  }
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.actions button {
+  min-width: 260px;
+  height: 48px;
+  font-size: 17px;
+  border-radius: 10px;
+}

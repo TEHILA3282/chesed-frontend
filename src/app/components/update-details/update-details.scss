@@ -1,0 +1,176 @@
+@use "sass:math";
+
+/* ========= צבעים ========= */
+$page-bg:  #f6f4f1;
+$ink:      #192a4a;
+$card-bg:  #f6f4f1;
+$field-bg: #d9d9d9;
+
+/* פונקציית אחוז “מהכרטיס” ביחס לפיגמה 1300px */
+@function pct($px, $of: 1300) { @return ($px / $of) * 100%; }
+
+/* יחסי פיגמה לרוחבים */
+$col-w: pct(280);   // 21.538%
+$gap-x: pct(18);    //  1.385%
+
+/* ========= עמוד ========= */
+html, body { height: 100%; overflow-x: hidden; }
+.page{
+  min-height: 100svh;
+  background: $page-bg;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow-x: clip;
+}
+
+/* ========= כרטיס ========= */
+.card{
+  width: min(94%, 1300px);
+  margin-inline: auto;
+  background: $card-bg;
+  border: 1px solid $ink;
+  border-radius: clamp(18px, 2.2vw, 32px);
+  padding: clamp(16px, 1.6vw, 28px) pct(44);
+  box-sizing: border-box;
+  position: relative; z-index: 1;
+}
+.card:first-of-type{
+  margin-top: clamp(8px, 1vw, 18px);
+  margin-bottom: clamp(12px, 1.2vw, 24px);
+}
+.card-title{
+  text-align: center; font-weight: 800;
+  font-size: clamp(24px, 3vw, 40px);
+  color:#0f223f; margin: 0 0 clamp(10px, 1.2vw, 18px);
+}
+
+/* ========= פס כחול ========= */
+.blue-section{
+  position: relative; z-index:0;
+  padding-top: clamp(20px, 2vw, 40px);
+  padding-bottom: clamp(24px, 2.8vw, 56px);
+  display: grid; place-items: start center;
+
+  &::before{
+    content:""; position:absolute; inset:0;
+    left:50%; right:50%; margin-left:-50vw; margin-right:-50vw;
+    background:$ink; z-index:-1;
+  }
+  .card{ margin-bottom:0; }
+}
+
+/* ========= GRID באחוזים ========= */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(4, $col-w);
+  justify-content:center;
+  column-gap:$gap-x;
+  row-gap: clamp(8px, .9vw, 14px);
+  grid-auto-flow:row;
+}
+
+/* ========= שדות Material ========= */
+$field-h: clamp(54px, 6.3vw, 82px);
+$field-radius: clamp(12px, 1.6vw, 20px);
+
+.field{
+  width:100% !important; max-width:100% !important;
+
+  .mat-mdc-form-field{
+    width:100% !important; max-width:100% !important;
+    flex:0 0 100% !important; margin:0 !important;
+  }
+}
+
+:host ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled{
+  background:$field-bg !important;
+  border-radius:$field-radius !important;
+  min-height:$field-h !important; height:$field-h !important;
+  align-items:center !important;
+}
+:host ::ng-deep .mdc-line-ripple{ display:none !important; }
+
+:host ::ng-deep .mat-mdc-form-field-infix{
+  padding:0 pct(22) !important;  /* אופקי – אחוז מהכרטיס */
+  min-height:$field-h !important;
+  display:flex !important; align-items:center !important; text-align:right !important;
+}
+
+/* טיפוגרפיה בשדות */
+:host ::ng-deep input.mat-mdc-input-element::placeholder{
+  color:#192a4a !important; opacity:1; font-weight:300 !important;
+  font-size: clamp(14px, 1.6vw, 20px) !important; text-align:right;
+}
+:host ::ng-deep input.mat-mdc-input-element,
+:host ::ng-deep .mat-mdc-select-value-text{
+  font-weight:600 !important; text-align:right !important;
+  font-size: clamp(13px, 1.4vw, 18px) !important;
+}
+:host ::ng-deep .mat-mdc-select-placeholder{
+  color:#192a4a !important; font-weight:300 !important;
+  font-size: clamp(14px, 1.6vw, 20px) !important;
+}
+
+/* ========= כפתור “עדכון פרטים” ========= */
+/* ממלא את אזור הגריד (2 עמודות) בדיוק כמו בפיגמה */
+.primary-btn{
+  background:$ink !important; color:#fff !important;
+  border-radius: clamp(12px, 1.6vw, 20px) !important;
+  height: clamp(48px, 5.5vw, 78px) !important;
+  width: 100% !important;              /* <<< לוקח את כל האזור */
+  padding: 0 clamp(10px, 1.4vw, 18px) !important;
+  font-weight:700 !important;
+  font-size: clamp(14px, 1.4vw, 18px) !important;
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  gap: clamp(6px, 1vw, 12px) !important;
+  flex:none !important;
+}
+
+/* מיקומים בגריד */
+.last-row-house{ grid-row:3; grid-column:1; }
+.last-row-city { grid-row:3; grid-column:2; }
+.last-row-item { grid-row:3; grid-column:3 / span 2; justify-self:end; } /* הכפתור */
+
+/* ========= כרטיס הבנק ========= */
+.bank-grid{
+  grid-template-columns: repeat(4, $col-w);
+  .debit-pill   { grid-row:2; grid-column:1 / span 2; justify-self:start; }
+  .last-bank-btn{ grid-row:2; grid-column:3 / span 2; justify-self:end; }
+}
+
+/* קפסולת השאלה – ממלאת את כל 2 העמודות, רדיוסים עגולים */
+.debit-pill{
+  width: 100%;                                 /* <<< לא קצרה */
+  height: clamp(48px, 5.5vw, 78px);
+  border: 1px solid $ink;
+  border-radius: clamp(12px, 1.6vw, 20px);
+  background:#f6f4f6; box-sizing:border-box;
+
+  display:flex; align-items:center; justify-content:space-between;
+  padding-inline: pct(28);
+
+  .q{
+    color:$ink; font-family:"Assistant", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(14px, 1.6vw, 22px);
+    font-weight:300; line-height:1.2; white-space:nowrap;
+    margin-left: clamp(8px, 1.1vw, 18px);
+  }
+  .radios{ display:inline-flex; align-items:center; gap: clamp(10px, 1.3vw, 22px); }
+}
+
+/* רדיו */
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__outer-circle,
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__inner-circle{
+  width: clamp(10px, 1.1vw, 14px);
+  height: clamp(10px, 1.1vw, 14px);
+  border-width: clamp(1px, .18vw, 2px) !important;
+}
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__outer-circle{ border-color: rgba(25,42,74,.35) !important; }
+:host ::ng-deep .mat-mdc-radio-button.mat-mdc-radio-checked .mdc-radio__inner-circle{ background:$ink !important; transform:scale(1) !important; }
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio{ padding:0 !important; }
+:host ::ng-deep .mat-mdc-radio-button .mdc-label{
+  color:$ink !important; font-weight:400 !important; margin-inline-start: clamp(3px, .5vw, 6px);
+  font-size: clamp(12px, 1.3vw, 18px) !important;
+}
+
+/* אין צורך ב-breakpoints – הפריסה נשמרת באחוזים עם clamp ליציבות */

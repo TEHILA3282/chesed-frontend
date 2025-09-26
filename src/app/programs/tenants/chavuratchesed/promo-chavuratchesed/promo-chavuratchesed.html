@@ -1,0 +1,43 @@
+<section class="promo-page" dir="rtl" aria-labelledby="promoTitle">
+  <div class="blue-band" aria-hidden="true"></div>
+
+  <div class="promo-shell">
+    <header class="promo-header">
+      <h2 id="promoTitle" class="promo-title">פרסומת הגמ"ח – חבורת חסד</h2>
+      <p class="promo-sub">עלונים פרסומיים (PDF) + סרטון תדמית</p>
+    </header>
+
+    <div class="promo-grid">
+      <article class="card" *ngFor="let p of promos">
+        <div class="card__badge" [class.badge--pdf]="p.kind==='pdf'" [class.badge--video]="p.kind==='video'">
+          <span *ngIf="p.kind==='pdf'">PDF</span>
+          <span *ngIf="p.kind==='video'">וידאו</span>
+        </div>
+
+        <div class="card__preview">
+          <ng-container *ngIf="p.kind==='pdf'">
+            <img *ngIf="p.thumb" [src]="p.thumb" alt="עמוד ראשון מתוך {{p.title}}" class="preview__img" />
+            <img *ngIf="!p.thumb && p.preview" [src]="p.preview" alt="עמוד ראשון מתוך {{p.title}}" class="preview__img" />
+            <div *ngIf="!p.thumb && !p.preview" class="preview__icon preview__icon--pdf" aria-hidden="true"></div>
+          </ng-container>
+
+          <div *ngIf="p.kind==='video'" class="preview__video">
+            <iframe
+              [src]="p.src"
+              title="סרטון פרסומי"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <h3 class="card__title">{{ p.title }}</h3>
+        <p *ngIf="p.blurb" class="card__blurb">{{ p.blurb }}</p>
+
+        <div class="card__actions" *ngIf="p.kind==='pdf'">
+          <a class="btn btn--primary" [href]="p.src" target="_blank" rel="noopener">פתיחה בלשונית</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+﻿# Angular / Node
+node_modules/
+dist/
+.angular/
+.vscode/
+.tmp/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS
+Thumbs.db
+.DS_Store
