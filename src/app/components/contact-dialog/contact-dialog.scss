@@ -1,128 +1,104 @@
-:host { display: block; }
+:host { display:block; }
 
-.contact-modal {
-  width: 510px;                          
-  max-width: min(510px, 92vw);
-  background: #F6F4F1;
-  border: 0.892px solid #192A4A;
-  border-radius: 32px;
-  overflow: hidden;
-  box-sizing: border-box;
-  color: #192A4A;
-  font-family: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+/* Overlay: תמיד במרכז, בלי גלילה חיצונית */
+.contact-overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex; justify-content:center; align-items:center;
+  padding:16px;               /* שוליים קבועים סביב המודל */
+  overflow:hidden;            /* לא מגלגלים את האוברליי */
 }
 
-.hero {
-  background: #192A4A;
-  color: #fff;
-  padding: 22px 28px 18px;
-  text-align: center;
+/* Modal: גובה מוגבל + גלילה פנימית חלקה */
+.contact-modal{
+  position:relative;
+  width:min(510px, 92vw);
+  max-height:min(90svh, 720px); /* נראה מצוין גם במסכים נמוכים */
+  background:#F6F4F1;
+  border:0.892px solid #192A4A;
+  border-radius:32px;
+  overflow:auto;                       /* גלילה רק בתוך המודל */
+  -webkit-overflow-scrolling:touch;
+  scrollbar-gutter:stable both-edges;
+}
+/* להסתרת פסי גלילה (אפשר עדיין לגלול) */
+.contact-modal::-webkit-scrollbar{ width:0; height:0; }
+.contact-modal{ scrollbar-width:none; }
+
+/* כפתור סגירה */
+.close-btn{
+  position:absolute; inset:10px 10px auto auto; /* ימין-עליון */
+  width:36px; height:36px; line-height:34px;
+  border-radius:50%;
+  background:#F6F4F1; color:#192A4A;
+  border:1px solid #192A4A;
+  font-size:22px; font-weight:700;
+  cursor:pointer;
+}
+.close-btn:hover{ background:#fff; }
+
+/* Header דביק כך שתמיד רואים את הכותרת */
+.hero{
+  position:sticky; top:0; z-index:1;
+  background:#192A4A; color:#fff;
+  padding:22px 28px 18px; text-align:center;
+  box-shadow:0 1px 0 rgba(0,0,0,.06);
+}
+.hero-title{
+  position:relative; display:inline-block;
+  margin:0 0 8px; padding-right:12px;
+  font:700 22px/1.2 "Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+.hero-title::before{ content:""; position:absolute; right:0; top:.1em; bottom:.1em; width:3px; background:#fff; border-radius:2px; }
+.hero-lines{ margin:0 0 8px; font-size:15px; line-height:1.35; }
+.hero-note{ margin:6px auto 0; max-width:420px; font-size:14px; line-height:1.55; }
+
+.phone-pill{
+  display:inline-block; padding:6px 14px; margin-inline:6px;
+  border-radius:24px; background:#F6F4F1; color:#192A4A; border:1px solid #192A4A;
+  text-decoration:none; font-weight:600;
 }
 
-.hero-title {
-  position: relative;
-  display: inline-block;
-  margin: 0 0 8px;
-  padding-right: 12px;                   /* רווח בין הקו לטקסט */
-  font-weight: 700;
-  font-size: 22px;
-  line-height: 1.2;
-}
-.hero-title::before {
-  content: "";
-  position: absolute;
-  right: 0;                               /* מימין */
-  top: 0.1em;
-  bottom: 0.1em;
-  width: 3px;
-  background: #FFFFFF;                    /* קו לבן */
-  border-radius: 2px;
-}
+/* Form */
+.form-area{ padding:18px 22px 24px; }
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+.cell{ width:100%; } .cell--full{ grid-column:1/-1; }
 
-.hero-lines {
-  margin: 0 0 8px;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 1.35;
+.field{
+  width:100%; box-sizing:border-box;
+  background:#D9D9D9; border:none; border-radius:16px;
+  padding:14px 18px; font-size:18px; font-weight:300; color:#192A4A;
+  outline:none; caret-color:#192A4A;
 }
-.hero-note  {
-  margin: 6px auto 0;
-  max-width: 420px;
-  font-size: 14px;
-  line-height: 1.55;
-}
+.field::placeholder{ color:rgba(25,42,74,1); }
+.field--textarea{ min-height:130px; max-height:40vh; resize:vertical; }
 
-.phone-pill {
-  display: inline-block;
-  padding: 6px 14px;
-  margin-inline: 6px;
-  border-radius: 24px;
-  background: #F6F4F1;
-  color: #192A4A;
-  border: 1px solid #192A4A;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-/* ——— טופס ——— */
-.form-area { padding: 18px 22px 24px; }
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
-}
-.cell { width: 100%; }
-.cell--full { grid-column: 1 / -1; }
-
-.field {
-  width: 100%;
-  box-sizing: border-box;
-  background: #D9D9D9;
-  border: none;
-  border-radius: 16px;
-  padding: 14px 18px;
-  font-size: 18px;
-  font-weight: 300;
-  color: #192A4A;
-  outline: none;
-  caret-color: #192A4A;
-}
-.field::placeholder { color: rgba(25,42,74,1); }
-.field--textarea { min-height: 150px; resize: vertical; }
-
-/* מצב שגוי – מסגרת אדומה קלה */
 .field.ng-invalid.ng-touched,
-.field.ng-invalid.ng-dirty { box-shadow: 0 0 0 2px rgba(179,38,30,.18) inset; }
+.field.ng-invalid.ng-dirty{ box-shadow:0 0 0 2px rgba(179,38,30,.18) inset; }
+.err{ margin-top:6px; color:#B3261E; font-size:12px; text-align:right; }
 
-/* טקסט שגיאה */
-.err {
-  margin-top: 6px;
-  color: #B3261E;                        /* אדום Material */
-  font-size: 12px;
-  text-align: right;
+/* Send button אזור דביק תחתון */
+.send-wrap{
+  position:sticky; bottom:0;
+  background:linear-gradient(180deg, rgba(246,244,241,0) 0%, #F6F4F1 40%);
+  padding:12px 0 0; margin-top:8px;
 }
-
-/* כפתור שליחה – outline */
-.send-btn {
-  margin: 18px auto 0;
-  width: 100%;
-  height: 48px;
-  border-radius: 26px;
-  background: transparent;
-  color: #192A4A;
-  border: 1px solid #192A4A;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color .2s ease, transform .06s ease;
+.send-btn{
+  width:100%; height:48px; border-radius:26px;
+  background:transparent; color:#192A4A; border:1px solid #192A4A;
+  font-size:15px; cursor:pointer;
+  transition:background-color .2s, transform .06s;
 }
-.send-btn:disabled { opacity: .55; cursor: default; }
-.send-btn:not(:disabled):hover { background: rgba(25,42,74,.06); }
-.send-btn:not(:disabled):active { transform: translateY(1px); }
+.send-btn:disabled{ opacity:.55; cursor:default; }
+.send-btn:not(:disabled):hover{ background:rgba(25,42,74,.06); }
+.send-btn:not(:disabled):active{ transform:translateY(1px); }
 
-/* רספונסיבי */
-@media (max-width: 640px) {
-  .contact-modal { border-radius: 24px; }
-  .form-area { padding: 16px; }
-  .grid { grid-template-columns: 1fr; gap: 12px; }
+/* Responsive */
+@media (max-width:640px){
+  .contact-modal{ border-radius:24px; }
+  .form-area{ padding:16px; }
+  .grid{ grid-template-columns:1fr; gap:12px; }
+  .hero{ padding:16px 16px 12px; }
+  .hero-title{ font-size:20px; }
+  .hero-lines,.hero-note{ font-size:13.5px; }
 }

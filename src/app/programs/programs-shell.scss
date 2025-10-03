@@ -1,0 +1,162 @@
+:host{
+  --brand-blue:#192A4A;
+  --ink:#192A4A;
+  --paper:#F6F4F1;
+  --stroke:#C9D2E8;
+  --header-h:72px;
+}
+
+/* עוגן מסך */
+.programs{
+  position: fixed;
+  inset: var(--header-h,72px) 0 0 0;
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;              /* הגלילה תהיה רק בבמה */
+}
+
+/* כותרת */
+.programs__header{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  text-align: center;
+  margin: 0;
+  padding: 3vh 2vw 2.4vh;
+  background: var(--paper);
+  box-shadow: 0 1px 0 rgba(0,0,0,.04);
+}
+.programs__title{
+  font-family:'Assistant',system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-weight:800;
+  font-size: clamp(28px,4.3vw,43.523px);
+  line-height:1.2;
+  color: var(--ink);
+  margin: 0;
+}
+.programs__subtitle{
+  display:block; margin-top:.6vh;
+  font-family:'Assistant',system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-weight:300; font-size: clamp(11px,1.5vw,14px);
+  color: rgba(25,42,74,.75);
+}
+
+/* במסכים גדולים נוסיף עוד רווח מלמעלה */
+@media (min-width: 901px) {
+  .programs__header { padding-top: 6vh; }
+}
+@media (max-width: 900px) {
+  .programs__header { padding-top: 3vh; }
+}
+
+/* במה – היא זו שגוללת */
+.programs__stage{
+  --floor-y: 62%;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;                         /* גלילה פנימית */
+  -webkit-overflow-scrolling: touch;
+  padding-inline: 6%;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0));
+
+  background:
+    linear-gradient(
+      to bottom,
+      var(--paper) 0 var(--floor-y),
+      var(--brand-blue) var(--floor-y)
+    );
+}
+
+/* הסתרת פסי גלילה */
+.programs__stage::-webkit-scrollbar{ width:0; height:0; }
+.programs__stage{ scrollbar-width: none; }
+
+/* גריד כרטיסים */
+.programs__grid{
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 16px 0 28px;
+  display: flex;
+  gap: clamp(10px,2.2vw,28px);
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+}
+.programs__grid > .card{
+  flex: 0 1 24.5%;
+  aspect-ratio: 354 / 474;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 1px solid var(--stroke);
+  border-radius: 46.309px;
+  overflow: hidden;
+}
+
+/* חלק עליון */
+.card__media{
+  height: 56%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6% 8%;
+  background: var(--paper);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+.card__icon{ width:27.7%; max-width:40%; aspect-ratio:98/137; display:grid; place-items:center; }
+.card__icon .doc, .card__icon .play{ width:100%; height:auto; display:block; }
+
+/* חלק תחתון */
+.card__footer{
+  height: 44%;
+  background: var(--brand-blue);
+  color: #F6F4F1;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  gap: 2.2vh; padding-inline: 6%; padding-block: 3.2vh 2.4vh;
+}
+.card__title{
+  font-family:'Assistant',system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-weight:800; font-size: clamp(14px,1.8vw,18px);
+  line-height:1.25; text-align:center; color:#fff;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.card__sub{
+  font-family:'Assistant',system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  font-weight:300; font-size: clamp(10px,1.2vw,12px);
+  text-align:center; color:#F6F4F1; opacity:.9; margin-top:-1vh;
+}
+
+/* פעולות */
+.card__actions{ display:flex; justify-content:center; align-items:center; gap:10px; }
+.action{
+  inline-size:36px; block-size:36px;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid var(--stroke);
+  display:grid; place-items:center;
+  cursor:pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.action:hover{ transform: translateY(-8%); box-shadow:0 4px 10px rgba(0,0,0,.12); }
+.ic{ width:18px; height:18px; color: var(--ink); }
+
+/* רספונסיבי */
+@media (max-width:1200px){ .programs__grid > .card{ flex-basis:30%; } }
+@media (max-width:900px){
+  .programs__stage{ padding-inline: 5%; }
+  .programs__grid{ gap: 3.5%; }
+  .programs__grid > .card{ flex-basis: 46.5%; }
+}
+@media (max-width:560px){
+  .programs__stage{ padding-inline: 4%; }
+  .programs__grid > .card{ flex-basis: 96%; }
+  .programs__header{ padding: 18px 14px 12px; }
+  .programs__title{ font-size: clamp(22px,5.4vw,28px); }
+  .programs__subtitle{ font-size: 12.5px; }
+}

@@ -5,7 +5,7 @@ import {
   FormBuilder, FormGroup, Validators, ReactiveFormsModule,
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
@@ -42,6 +42,10 @@ export class Register {
   errorMessage = '';
   institution: InstitutionConfig;
 
+  // toggles לעין
+  hidePassword = true;
+  hideConfirm  = true;
+
   constructor(
     private fb: FormBuilder,
     private registrationService: RegistrationService,
@@ -76,17 +80,68 @@ export class Register {
       InstitutionId: [institutionId]
     }, { validators: this.passwordsMatchValidator });
 
-    // חשוב: כשמשנים סיסמה – מעדכנים את אימות הסיסמה, כדי שהכפתור ישתחרר כשצריך
     this.form.get('Password')?.valueChanges.subscribe(() => {
       this.form.get('ConfirmPassword')?.updateValueAndValidity({ onlySelf: true });
+      this.form.updateValueAndValidity();
+    });
+    this.form.get('ConfirmPassword')?.valueChanges.subscribe(() => {
+      this.form.updateValueAndValidity();
     });
 
     this.form.reset({
       Role: 'User',
       RegistrationStatus: 'ממתין',
       StatusUpdatedAt: new Date(),
-      InstitutionId: institutionId
+      InstitutionId: institutionId,
+      PersonalStatus: ''
     });
+  }
+
+  /** מאפשרים הקלדת תאריך חופשי ונרמל לפורמט בטוח */
+  normalizeDobFromText(ev: FocusEvent) {
+    const input = ev.target as HTMLInputElement;
+    const text  = (input?.value || '').trim();
+    if (!text) return;
+
+    const d = this.parseFreeDate(text);
+    if (d) {
+      this.form.get('DateOfBirth')?.setValue(d);
+      this.form.get('DateOfBirth')?.updateValueAndValidity();
+    } else {
+      this.form.get('DateOfBirth')?.setValue(null);
+      this.form.get('DateOfBirth')?.updateValueAndValidity();
+    }
+  }
+
+  /** כשהמשתמש בוחר מהפיקר – פשוט לוודא שזה Date */
+  normalizeDobFromPicker(ev: any) {
+    const d: Date | null = ev?.value ? new Date(ev.value) : null;
+    this.form.get('DateOfBirth')?.setValue(d);
+    this.form.get('DateOfBirth')?.updateValueAndValidity();
+  }
+
+  /** פרסר ידידותי */
+  private parseFreeDate(text: string): Date | null {
+    const t = text.replace(/\u200e|\u200f/g, '').trim();
+
+    let m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(t);
+    if (m) return this.makeDate(+m[1], +m[2], +m[3]);
+
+    m = /^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})$/.exec(t);
+    if (m) return this.makeDate(+m[3], +m[2], +m[1]);
+
+    m = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(t);
+    if (m) return this.makeDate(+m[3], +m[1], +m[2]);
+
+    return null;
+  }
+
+  private makeDate(y: number, m: number, d: number): Date | null {
+    if (y < 1900 || y > 2100) return null;
+    if (m < 1 || m > 12) return null;
+    if (d < 1 || d > 31) return null;
+    const dt = new Date(y, m - 1, d);
+    return (dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d) ? dt : null;
   }
 
   noFutureDateValidator = (control: AbstractControl): ValidationErrors | null => {
@@ -105,13 +160,29 @@ export class Register {
     return password === confirm ? null : { passwordsMismatch: true };
   };
 
+  private trimFields(v: any): any {
+    const r = { ...v };
+    ['FirstName','LastName','Email','City','Street','HouseNumber'].forEach(k => {
+      if (typeof r[k] === 'string') r[k] = r[k].trim();
+    });
+    return r;
+  }
+
   onSubmit() {
+    this.errorMessage = '';
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const v = this.form.value;
+    const v = this.trimFields(this.form.value);
+
+    let birth: string | undefined = undefined;
+    if (v.DateOfBirth instanceof Date && !isNaN(v.DateOfBirth.getTime())) {
+      birth = formatDate(v.DateOfBirth, 'yyyy-MM-dd', 'en-IL');
+    }
+
     const payload: RegistrationCreateDto = {
       ID: v.ID,
       Email: v.Email,
@@ -120,7 +191,7 @@ export class Register {
       LastName: v.LastName || undefined,
       PhoneNumber: v.PhoneNumber || undefined,
       LandlineNumber: v.LandlineNumber || undefined,
-      DateOfBirth: v.DateOfBirth ? new Date(v.DateOfBirth).toISOString().slice(0, 10) : undefined,
+      DateOfBirth: birth,
       PersonalStatus: v.PersonalStatus || undefined,
       Street: v.Street || undefined,
       City: v.City || undefined,
@@ -131,8 +202,17 @@ export class Register {
       .subscribe({
         next: (exists: boolean) => {
           if (exists) { this.errorMessage = 'משתמש עם כתובת מייל או תעודת זהות זו כבר קיים במערכת'; return; }
+
           this.registrationService.register(payload).subscribe({
-            next: () => this.router.navigate(this.institutionService.link(['login'])),
+            next: () => {
+              const username = payload.ID || payload.Email;
+              // מעבר לדף התחברות עם העברת *רק* username ב־history.state
+              this.router.navigate(
+                this.institutionService.link(['login']),
+                { state: { username } }
+              );
+           
+            },
             error: () => this.errorMessage = 'ארעה שגיאה במהלך ההרשמה'
           });
         },

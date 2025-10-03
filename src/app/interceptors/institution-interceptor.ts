@@ -8,31 +8,38 @@ export const InstitutionInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const instSvc = inject(InstitutionService);
-  const instId = instSvc.getInstitutionId();
-  const slug = instSvc.getSlug();
+  const instId  = instSvc.getInstitutionId();
+  const slug    = instSvc.getSlug();
 
-  const isRelative = req.url.startsWith('/');
-  let sameOriginApi = false;
 
-  if (isRelative) {
-    sameOriginApi = req.url.startsWith('/api');
-  } else {
-    try {
-      const u = new URL(req.url);
-      const cur = new URL(window.location.href);
-      sameOriginApi = (u.origin === cur.origin) && u.pathname.startsWith('/api');
-    } catch {
-      sameOriginApi = false;
+  if (req.url.startsWith('/')) {
+    return next(req.clone({
+      setHeaders: buildHeaders(instId, slug)
+    }));
+  }
+
+  try {
+    const u   = new URL(req.url);
+    const cur = new URL(window.location.href);
+    const sameOrigin = (u.origin === cur.origin);
+
+    if (sameOrigin) {
+      // לא מגבילים ל-/api; שולחים תמיד למקור שלנו
+      return next(req.clone({
+        setHeaders: buildHeaders(instId, slug)
+      }));
     }
+  } catch {
+    // אם נכשל פרסינג – לא לעצור את הבקשה
   }
 
-  if (!sameOriginApi) {
-    return next(req); 
-  }
-
-  const headers: Record<string, string> = {};
-  if (slug) headers['X-Institution-Slug'] = slug;
-  if (!headers['X-Institution-Slug'] && instId > 0) headers['X-Institution-Id'] = String(instId);
-
-  return next(req.clone({ setHeaders: headers }));
+ 
+  return next(req);
 };
+
+function buildHeaders(instId: number, slug?: string): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (instId > 0) headers['X-Institution-Id'] = String(instId); // תמיד!
+  if (slug)       headers['X-Institution-Slug'] = slug;         // אופציונלי, בנוסף
+  return headers;
+}

@@ -13,17 +13,17 @@ import { filter } from 'rxjs';
 
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { InstitutionInterceptor } from './interceptors/institution-interceptor';
+import { apiPrefixInterceptor } from './interceptors/api-prefix.interceptor';
 
 import { routes } from './app.routes';
 import { NgChartsModule } from 'ng2-charts';
 
 import { ContactService } from './services/contact.service';
-
 import { SeoService } from './services/seo.service';
 import { InstitutionService } from './services/institution.service';
 
 function preloadPublicInfoFactory(contact: ContactService) {
-  return () => contact.preloadPublicInfo();
+  return () => contact.preloadPublicInfo(); // נטען לפני ציור האפליקציה
 }
 
 function setCanonical(url: string) {
@@ -45,9 +45,7 @@ function seoNavInitFactory(router: Router, inst: InstitutionService, seo: SeoSer
       seo.setBreadcrumbJsonLd('https://c-chesed.org.il/', null, inst.getInstitution().name, absUrl);
       setCanonical(absUrl);
     };
-
     apply();
-
     router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(apply);
   };
 }
@@ -58,8 +56,11 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     importProvidersFrom(NgChartsModule),
+
+    // סדר נכון: prefix -> institution -> auth
     provideHttpClient(
       withInterceptors([
+        apiPrefixInterceptor,
         InstitutionInterceptor,
         AuthInterceptor,
       ])
@@ -74,7 +75,6 @@ export const appConfig: ApplicationConfig = {
       deps: [ContactService],
       multi: true
     },
-
     {
       provide: APP_INITIALIZER,
       useFactory: seoNavInitFactory,

@@ -1,64 +1,173 @@
-.actions-container {
-  text-align: center;
-  padding: 2rem;
-  background-color: #f7f7f7;
+/* ===== משתנים ===== */
+$brand-blue: #192A4A;
+$page-bg: #F6F4F1;
+$text-dark: #0C1B2A;
+$text-light: #FFFFFF;
 
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
+/* יחסיים, ללא פיקסלים קשיחים */
+$pill-max-w: 1166px;
+$pill-h: clamp(72px, 8.6vw, 109px);
+$pill-radius: 9999px;
+
+/* ===== בסיס עמוד ===== */
+.actions-page{
+  position: relative;
+  background: $page-bg;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  /* במסכים רחבים לא נרצה גלילה פנימית */
+  overflow-y: clip;
+
+  .bottom-band{
+    position: absolute;
+    inset: auto 0 0 0;          /* דבוק לתחתית */
+    height: clamp(260px, 32vh, 380px);
+    background: $brand-blue;
+    z-index: 0;                 /* מאחורי הכול */
   }
 
-  .subtitle {
-    margin: 0.5rem 0 2rem;
-    color: #666;
+  .container{
+    position: relative;
+    z-index: 1;
+    max-width: calc(#{$pill-max-w} + 4rem);
+    margin-inline: auto;
+    padding: 56px 2rem calc(clamp(260px, 32vh, 380px) - 80px);
   }
 
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
+  /* ===== כותרת ===== */
+  .header{
+    text-align: center;
+    margin-bottom: 24px;
 
-    .card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 1.5rem;
-      width: 250px;
-      box-shadow: 0 2px 8px  rgb(69, 51, 51);
-      transition: transform 0.3s;
-      cursor: pointer;
+    .title{
+      margin: 0 0 6px;
+      font: 800 clamp(24px, 3.1vw, 32px)/1.15 "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color: $brand-blue;
+    }
+    .sub{
+      margin: 0;
+      font: 300 clamp(12px, 1.2vw, 14px)/1.2 "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color: rgba($brand-blue,.7);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
 
-      &:hover {
-        transform: translateY(-5px);
-      }
+  /* ===== רשימת גלולות ===== */
+  .list{
+    display: grid;
+    justify-items: center;
+    row-gap: clamp(14px, 2vw, 22px);
+  }
 
-      h3 {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-      }
+  /* ===== גלולה – שלישים מדויקים + קווי מפריד כרקע ===== */
+  .pill{
+    --pad-x: clamp(18px, 2.4vw, 28px);      /* ריווח פנימי */
+    --gap-x: clamp(10px, 1.4vw, 16px);      /* ריווח מהקו */
+    --divider-h: clamp(16px, 2.2vw, 24px);  /* גובה קו */
 
-      p {
-        font-size: 0.95rem;
-        color: #333;
-        margin-bottom: 1rem;
-      }
+    width: clamp(280px, 88vw, $pill-max-w);
+    height: $pill-h;
+    border-radius: $pill-radius;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 33.333% לכל חלק */
+    align-items: center;
+    padding-inline: var(--pad-x);
+    border: 1px solid #D9D9D9;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform .08s ease-out, box-shadow .12s ease-out, background .12s ease-out;
 
-      button {
-        background:  rgb(69, 51, 51);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-        cursor: pointer;
+    /* שני קווי מפריד מדויקים, לא תופסים רוחב */
+    background-image:
+      linear-gradient(currentColor, currentColor),
+      linear-gradient(currentColor, currentColor);
+    background-size: 1px var(--divider-h), 1px var(--divider-h);
+    background-repeat: no-repeat;
+    background-origin: padding-box;
+    background-position:
+      calc(33.333%) 50%,  /* בין כותרת לטקסט */
+      calc(66.666%) 50%;  /* בין טקסט לחץ  */
 
-        .arrow {
-          display: inline-block;
-          transform: rotate(180deg);
-        }
-      }
+    &:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+    &:active{ transform: translateY(0);   box-shadow: 0 2px  8px rgba(0,0,0,.04); }
+
+    /* עמודה 1 – כותרת (ימין) */
+    .pill__title{
+      grid-column: 1;
+      justify-self: end;
+      margin-inline-end: var(--gap-x);   /* מרחק מהקו */
+      font: 800 clamp(20px, 2.6vw, 30px)/1 "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color: inherit;
+    }
+
+    /* עמודה 2 – טקסט ממורכז */
+    .pill__desc{
+      grid-column: 2;
+      justify-self: center;
+      text-align: center;
+      padding-inline: var(--gap-x);      /* מרחק משני הקווים */
+      min-width: 0;
+      font: 300 clamp(14px, 1.8vw, 18px)/1.2 "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      opacity: .95;
+      color: inherit;
+    }
+    .ellipsis{
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* עמודה 3 – חץ (שמאל) */
+    .pill__arrow{
+      grid-column: 3;
+      justify-self: start;
+      margin-inline-start: var(--gap-x);  /* מרחק מהקו */
+    }
+    .icon-arrow{
+      width: clamp(34px, 4.2vw, 54px);
+      height: clamp(8px, 1.2vw, 12px);
+      display: block;
+      color: currentColor;
+      transform: scaleX(1); /* שמאלה */
+    }
+  }
+
+  /* שתי העליונות – כהות על רקע לבן */
+  .pill--dark{
+    background-color: $brand-blue;
+    color: $text-light;
+    border-color: #D9D9D9;
+
+    .pill__title{ color: #F6F4F1; }
+    .pill__desc { color: #FFF; font-weight: 300; }
+  }
+
+  /* השלישית – בהירה על הפס הכחול */
+  .pill--light{
+    background-color: $page-bg;
+    color: $brand-blue;
+
+    .pill__title{ color: $brand-blue; }
+    .pill__desc { color: rgba($brand-blue,.95); }
+  }
+
+  /* ===== רספונסיביות ===== */
+  @media (max-width: 900px){
+    /* במסך קטן נאפשר גלילה */
+    overflow-y: auto;
+
+    .pill{
+      grid-template-columns: 1fr;     /* עמודה בודדת במובייל */
+      text-align: center;
+      background-image: none;         /* בלי קווים */
+
+      .pill__title{ order: 1; justify-self: center; margin: 0 0 6px; }
+      .pill__desc { order: 2; justify-self: center; padding-inline: 0; }
+      .pill__arrow{ order: 3; justify-self: center; margin: 0; }
+      .ellipsis{ max-width: 82vw; }
     }
   }
 }

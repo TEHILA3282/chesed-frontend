@@ -24,17 +24,14 @@ export class RegistrationService {
 
   constructor(private http: HttpClient) {}
 
-  register(data: RegistrationCreateDto): Observable<any> {
+  register(data: RegistrationCreateDto) {
     return this.http.post(this.api, data);
   }
 
-  checkEmailOrIdExists(
-    email: string,
-    id: string,
-    institutionId: number
-  ): Observable<boolean> {
+  checkEmailOrIdExists(email: string, id: string, institutionId: number) {
     return this.http.get<boolean>(`${this.api}/check-exists`, {
       params: { email, id, institutionId: String(institutionId) }
     });
   }
 }
+

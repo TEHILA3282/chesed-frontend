@@ -1,0 +1,70 @@
+<section class="programs" dir="rtl" aria-labelledby="programsTitle">
+  <header class="programs__header">
+    <h2 id="programsTitle" class="programs__title">{{ title() }}</h2>
+    <small class="programs__subtitle" *ngIf="subtitle()">{{ subtitle() }}</small>
+  </header>
+
+  <!-- שימי לב: אין יותר programs__floor -->
+  <div class="programs__stage" #stage>
+    <ul class="programs__grid" role="list">
+      <li class="card" *ngFor="let item of items()">
+        <!-- חלק עליון בהיר -->
+        <div class="card__media">
+          <div class="card__icon">
+            <!-- מסמך -->
+            <svg *ngIf="item.kind!=='video'" viewBox="0 0 98 137" class="doc" aria-hidden="true">
+              <!-- מסגרת חיצונית דקה (C9D2E8) -->
+              <rect x="0.5" y="0.5" width="97" height="136" rx="8" fill="none" stroke="#C9D2E8"/>
+
+              <!-- לוחית אפורה דקה מאחורי האייקון (כמו Figma: Group 23) -->
+              <rect x="19.5" y="30" width="59.9" height="20.2" rx="3.8" fill="#D9D9D9"/>
+
+              <!-- “דף” כהה בפנים + שלוש שורות -->
+              <rect x="14" y="16" width="70" height="105" rx="8" fill="none" stroke="#192A4A" stroke-width="2"/>
+              <rect x="19.46" y="40" width="59.08" height="10" rx="3" fill="#192A4A" />
+              <rect x="19.46" y="52" width="59.08" height="10" rx="3" fill="#192A4A" opacity=".85"/>
+              <rect x="19.46" y="64" width="38"    height="10" rx="3" fill="#192A4A" opacity=".7"/>
+            </svg>
+
+            <!-- וידאו -->
+            <svg *ngIf="item.kind==='video'" viewBox="0 0 114 114" class="play" aria-hidden="true">
+              <circle cx="57" cy="57" r="57" fill="#F6F6F6"/>
+              <circle cx="57" cy="57" r="51.5" fill="none" stroke="#192A4A" stroke-width="3"/>
+              <path d="M48 40 L80 57 L48 74 Z" fill="#192A4A"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- חלק תחתון כחול -->
+        <div class="card__footer">
+          <div class="card__title" [title]="item.title">{{ item.title }}</div>
+          <div class="card__sub" *ngIf="item.subtitle">{{ item.subtitle }}</div>
+
+          <!-- אייקוני פעולות בסגנון הפיגמה: עיגולים לבנים עם מסגרת -->
+          <div class="card__actions" aria-label="פעולות">
+            <button type="button" class="action" aria-label="אהבתי" title="אהבתי">
+              <svg viewBox="0 0 24 24" class="ic">
+                <path d="M7 21H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h2v10zM9 21h6.2a3 3 0 0 0 2.94-2.39l1.33-7A2 2 0 0 0 17.51 9H14V6a3 3 0 0 0-3-3h-1l-1 6H9v12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <button type="button" class="action" aria-label="מסמך" title="מסמך">
+              <svg viewBox="0 0 24 24" class="ic">
+                <path d="M6 3h9l3 3v15H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M15 3v3h3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 11h8M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <button type="button" class="action" aria-label="קישור" title="קישור">
+              <svg viewBox="0 0 24 24" class="ic">
+                <path d="M10 14l4-4M7.5 16.5a3.5 3.5 0 0 1 0-5l3-3a3.5 3.5 0 0 1 5 5l-1 1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16.5 7.5a3.5 3.5 0 0 1 0 5l-3 3a3.5 3.5 0 0 1-5-5l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

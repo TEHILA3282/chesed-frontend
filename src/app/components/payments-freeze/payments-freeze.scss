@@ -1,65 +1,149 @@
-:host { display: block; }
-
-.freeze-page {
-  margin-top: 30px;   
-  display: grid;
-  justify-items: center;
-  padding-block: 16px 8px;
-  box-sizing: border-box;
+:host {
+  --brand-blue: #192A4A;
+  --paper: #F6F4F1;
+  --ink: #192A4A;
+  --muted: #D9D9D9;
+  --stroke: #192A4A;
+  --header-h: 72px;                    /* גובה ההדר בפועל */
+  --band-h: clamp(260px, 19.2vw, 368px);
+  --card-r: 52px;
+  --soft-r: 18px;
+  --title-size: clamp(28px,3.2vw,43.523px);
+  --subtitle-size: clamp(16px,1.5vw,21.92px);
+  --btn-font: clamp(16px,1.35vw,20px);
+  --field-w: min(576px,92vw);
+  font-family:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
 }
 
-.main-title {
-  font-size: 34px;
-  font-weight: 800;
+/* מסך עם גלילה רגילה */
+.freeze-screen {
+  position: relative;
+  min-height: calc(100dvh - var(--header-h));
+  padding-top: clamp(36px, 5vh, 60px); /* רווח מוגדל מראש */
+  background: var(--paper);
+  overflow: auto;
+}
+
+/* רצועה כחולה בתחתית */
+.bottom-band {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: var(--band-h);
+  background: var(--brand-blue);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* כרטיס */
+.card {
+  position: relative;
+  z-index: 1;
+  width: min(980px,92vw);
+  margin: 0 auto;
+  border: 1px solid var(--stroke);
+  border-radius: var(--card-r);
+  background: var(--paper);
+  padding: clamp(22px,2.4vw,34px) clamp(18px,3vw,44px);
+  margin-bottom: calc(var(--band-h) + clamp(40px,6vh,80px));
+  box-shadow: 0 0 0 1px rgba(0,0,0,.02);
+}
+
+/* כותרת */
+.card__header {
   text-align: center;
-  margin: 4px 0 5px;
+  margin-bottom: clamp(36px, 4vh, 48px);
+}
+.title {
+  color: var(--ink);
+  font-weight: 800;
+  font-size: var(--title-size);
+  line-height: 1.2;
+  margin: 0 0 clamp(6px,1vh,10px);
 }
 .subtitle {
-  text-align: center;
-  color: #5d5d5d;
-  margin-bottom: 20px;
+  color: var(--ink);
+  font-weight: 300;
+  font-size: var(--subtitle-size);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.freeze-form {
-  width: min(980px, 92vw);
+/* טופס */
+.form {
   display: grid;
-  gap: 16px;
-  justify-items: center; 
-  box-shadow: 0 2px 8px  rgb(69, 51, 51);
-  margin: 1rem auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 16px; 
+  justify-items: center;
+  gap: clamp(14px, 2vh, 22px);
+  margin-top: clamp(32px, 4vh, 48px); /* עוד רווח אחרי header */
 }
 
-.full {
-  width: 100%;
-  max-width: 720px;
-}
-
-.ack-box {
-  width: 100%;
-  max-width: 720px;
-  display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #f6f3d6; 
-  color: #333;
-
-  :host ::ng-deep .mat-mdc-checkbox .mdc-form-field label {
-    color: inherit;
+/* שדה טקסט */
+.field { width: var(--field-w); }
+.field--textarea {
+  ::ng-deep .mdc-text-field--filled {
+    background: var(--muted) !important;
+    border-radius: var(--soft-r) !important;
+    padding-inline: clamp(18px,2vw,28px) !important;
+    align-items:flex-start;
   }
+  ::ng-deep .mdc-text-field__input {
+    min-height: clamp(120px,11.5vw,145px);
+    text-align:right; line-height:1.55;
+  }
+  ::ng-deep .mdc-floating-label { right: clamp(18px,2vw,28px); }
+  ::ng-deep .mdc-line-ripple { display:none; }
 }
 
-.actions {
+/* שורת האישור */
+.ack-row {
+  width: var(--field-w);
+  padding: 14px clamp(18px, 2vw, 28px);
+  background: var(--muted);
+  border-radius: var(--soft-r);
+  color: #404B5A;
+  font-size: clamp(12px, 1.05vw, 14px);
+  display: flex;               /* פלקס לשמירה על אותה שורה */
+  align-items: center;
+  gap: 12px;
+}
+
+/* העיגול בצד ימין, הטקסט לידו */
+::ng-deep .ack-row .mdc-form-field {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center;
+  gap: 12px;
   width: 100%;
-  display: flex;
-  justify-content: center;
+  text-align: right;
 }
-.actions button {
-  min-width: 260px;
-  height: 48px;
-  font-size: 17px;
-  border-radius: 10px;
+
+/* checkbox כעיגול */
+::ng-deep .ack-row__check .mdc-checkbox { width:20px; height:20px; }
+::ng-deep .ack-row__check .mdc-checkbox__background {
+  border-radius:50% !important;
+  border:2px solid var(--brand-blue) !important;
+  background:#fff !important;
 }
+::ng-deep .ack-row__check .mdc-checkbox__checkmark,
+::ng-deep .ack-row__check .mdc-checkbox__mixedmark { display:none !important; }
+::ng-deep .ack-row__check .mdc-checkbox__native-control:enabled:checked
+  ~ .mdc-checkbox__background {
+  box-shadow: inset 0 0 0 6px var(--brand-blue);
+}
+
+/* כפתור */
+.actions { width: var(--field-w); display:flex; justify-content:center; }
+.outline-btn {
+  width: var(--field-w);
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:17px 44px;
+  border-radius:200px; border:1px solid var(--stroke);
+  background:transparent; color:var(--ink);
+  font-size:var(--btn-font); font-weight:400; cursor:pointer;
+  transition: transform .08s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.outline-btn:disabled { opacity:.55; cursor:not-allowed; }
+.outline-btn:not(:disabled):hover { background: rgba(25,42,74,.04); box-shadow:0 1px 0 rgba(0,0,0,.06); }
+.outline-btn:not(:disabled):active { transform: translateY(1px); }
+
+/* יישור RTL ל–Mat */
+::ng-deep .mat-mdc-form-field-infix { text-align:right; }

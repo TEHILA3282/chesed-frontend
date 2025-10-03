@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -33,19 +33,37 @@ export class ContactDialogComponent implements OnInit {
     message:   ['', Validators.required],
   });
 
-  ngOnInit(): void {
-this.contact.publicInfo$().subscribe((i: InstitutionPublicInfo | null) => {
-  this.info = i ?? undefined;
-});
+  async ngOnInit(): Promise<void> {
+    if (!this.contact.currentPublicInfo) {
+      await this.contact.refreshPublicInfo();
+    }
+    this.contact.publicInfo$().subscribe((i) => {
+      this.info = i ?? undefined;
+    });
   }
 
+  // חדש: סגירת הדיאלוג
+  close(): void {
+    this.dialogRef.close(false);
+  }
+
+  // אופציונלי: סגירה ב-Escape
+  @HostListener('document:keydown.escape')
+  onEsc(): void { this.close(); }
+
   async onSubmit() {
-    if (!this.form.valid || !this.info) return;
+    if (!this.form.valid || this.loading) return;
     this.loading = true;
     try {
+      if (!this.info) {
+        await this.contact.refreshPublicInfo();
+        this.info = this.contact.currentPublicInfo ?? undefined;
+      }
+      if (!this.info) return;
+
       await this.contact.submitContact({
         institutionId: this.info.institutionId,
-        ...this.form.value as any
+        ...(this.form.value as any),
       });
       this.dialogRef.close(true);
     } finally {

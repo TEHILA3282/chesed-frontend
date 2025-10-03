@@ -13,7 +13,6 @@ import { LoansService } from '../../services/loans.service';
 import { GuarantorsFormComponent } from '../guarantors/guarantors-form/guarantors-form';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-
 @Component({
   selector: 'app-loan',
   templateUrl: './loan.html',
@@ -23,28 +22,36 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     CommonModule, FormsModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatRadioModule, MatButtonModule, MatCheckboxModule,
-    GuarantorsFormComponent, MatSnackBarModule 
+    GuarantorsFormComponent, MatSnackBarModule
   ]
 })
 export class LoanComponent implements OnInit {
   @Input() loanTypeId!: number;
+
   loanTypeTitle = '';
   subtitleText = '';
   isBridge = false;
+
   detailsLabel = 'פרט';
   detailsPlaceholder = '';
-  detailsHelper = ''; 
+  detailsHelper = '';
 
   amount: number | null = null;
   paymentsCount: number | null = null;
   loanPurpose = '';
   description = '';
+
   isForApartment: string = 'no';
   apartmentConfirmed = false;
+
+  // אינדקס טאב לערבים (לשימוש עם העיצוב)
+  activeGuarantor = 0;
+
   guarantors: { idNumber: string; fullName: string; phone: string }[] = [];
-onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]) {
-  this.guarantors = list;
-}
+  onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]) {
+    this.guarantors = list;
+  }
+
   loanPurposes: string[] = [
     'רכישת דירה', 'חתונה בן / בת', 'בר מצווה / בת מצווה',
     'הרחבת דירה', 'שיפוץ דירה', 'שמחה משפחתית',
@@ -57,7 +64,6 @@ onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]
     private route: ActivatedRoute,
     private router: Router,
     private snack: MatSnackBar
-
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +79,6 @@ onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]
 
   private applyUi(type: LoanType) {
     this.loanTypeTitle = type.name;
-
     this.isBridge = (type.id === 2);
 
     this.subtitleText = this.isBridge
@@ -105,15 +110,16 @@ onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]
       apartmentConfirmed: this.isBridge ? false : this.apartmentConfirmed,
       guarantors: this.guarantors
     };
-this.loansService.create(payload).subscribe({
-  next: res => {
-    this.snack.open('הבקשה נשמרה בהצלחה', 'סגור', { duration: 3000, direction: 'rtl' });
-    this.router.navigate(['/loans-list']);
-  },
-  error: err => {
-    this.snack.open('אירעה שגיאה בשמירה', 'סגור', { duration: 4000, direction: 'rtl' });
-    console.error('שגיאה ביצירת הלוואה', err);
-  }
-});
+
+    this.loansService.create(payload).subscribe({
+      next: _ => {
+        this.snack.open('הבקשה נשמרה בהצלחה', 'סגור', { duration: 3000, direction: 'rtl' });
+        this.router.navigate(['/loans-list']);
+      },
+      error: err => {
+        this.snack.open('אירעה שגיאה בשמירה', 'סגור', { duration: 4000, direction: 'rtl' });
+        console.error('שגיאה ביצירת הלוואה', err);
+      }
+    });
   }
 }

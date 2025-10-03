@@ -46,7 +46,7 @@ export class AdminComponent implements OnInit {
     this.loadPendingUsers();
     this.loadApprovedUsers();
     this.loadRejectedUsers();
-    this.loadForms();
+    // this.loadForms();
   }
 
   loadPendingUsers() {
@@ -80,12 +80,12 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadForms() {
-    this.http.get<any[]>(`${this.adminApi}/external-forms`).subscribe({
-      next: data => this.forms = data,
-      error: () => { if (!this.isSyncing) this.snackBar.open('❌ שגיאה בטעינת טפסים חיצוניים', 'סגור', { duration: 3000 }); }
-    });
-  }
+  // loadForms() {
+  //   this.http.get<any[]>(`${this.adminApi}/external-forms`).subscribe({
+  //     next: data => this.forms = data,
+  //     error: () => { if (!this.isSyncing) this.snackBar.open('❌ שגיאה בטעינת טפסים חיצוניים', 'סגור', { duration: 3000 }); }
+  //   });
+  // }
 
   syncUsers() {
     this.isSyncing = true;

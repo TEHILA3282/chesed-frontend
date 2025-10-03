@@ -1,26 +1,40 @@
-<div class="actions-container">
-  <h2 class="title">בחרו סוג הפקדה</h2>
-  <p class="subtitle">בחרו את סוג ההפקדה הרצוי שברצונכם לבצע</p>
-  <ng-container *ngIf="depositTypes.length > 0">
-    <div class="cards">
-      <div
-        class="card"
-        *ngFor="let deposit of depositTypes"
-        (click)="goToDeposit(deposit)"
-      >
-        <h3>{{ deposit.name }}</h3>
-        <p>{{ deposit.description }}</p>
-        <button class="circle-btn"><span class="arrow">⬅</span></button>
-      </div>
-    </div>
+<section class="deposit-screen" dir="rtl" aria-labelledby="depositTitle">
+  <!-- רצועה כחולה דבוקה לתחתית -->
+  <div class="bottom-band" aria-hidden="true"></div>
 
+  <!-- כותרות -->
+  <header class="header">
+    <h2 id="depositTitle" class="title">בחרו סוג הפקדה</h2>
+    <small class="subtitle">בחרו את סוג ההפקדה הרצוי שברצונכם לבצע</small>
+  </header>
+
+  <!-- גריד כרטיסים -->
+  <ng-container *ngIf="!isLoading && depositTypes?.length">
+    <ul class="cards" role="list">
+      <!-- שלוש כהות למעלה, השאר בהירות -->
+      <li
+        class="card"
+        *ngFor="let d of depositTypes; index as i; trackBy: trackById"
+        [class.card--light]="i >= 3"
+        (click)="goToDeposit(d)"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="d?.name || 'סוג הפקדה'">
+
+        <div class="card__inner">
+          <div class="card__title">{{ d.name }}</div>
+          <small class="card__subtitle" *ngIf="$any(d)?.subtitle as sub">{{ sub }}</small>
+        </div>
+      </li>
+    </ul>
   </ng-container>
 
-  <div *ngIf="!isLoading && depositTypes.length === 0" class="no-results">
+  <!-- מצבים -->
+  <div *ngIf="!isLoading && (!depositTypes || depositTypes.length===0)" class="no-results">
     לא נמצאו סוגי הפקדות זמינים
   </div>
 
-  <div *ngIf="isLoading" class="spinner-container">
+  <div *ngIf="isLoading" class="spinner-wrap">
     <mat-spinner></mat-spinner>
   </div>
-</div>
+</section>

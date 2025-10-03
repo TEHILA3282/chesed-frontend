@@ -14,34 +14,42 @@ import { DepositType } from '../../services/deposit-type.service';
 })
 export class DepositListComponent implements OnInit {
   depositTypes: DepositType[] = [];
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(
     private router: Router,
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.depositTypes = this.authService.getDepositTypes();
     this.isLoading = false;
   }
 
- goToDeposit(deposit: DepositType) {
-    const isFreezeByName = (deposit.name || '').trim() ==='בקשה להקפאת תשלומים'
-     const isFreezeByNameNumTwo = (deposit.name || '').trim() ==='בקשה למשיכת הפקדה'
-   if (isFreezeByName) {
-  this.router.navigate(['/payments-freeze'], { queryParams: { type: 'deposit' } });
-  return;
-}
-   if (isFreezeByNameNumTwo) {
-  this.router.navigate(['/deposit-withdraw'], { queryParams: { type: 'deposit' } });
-  return;
-}
-  if (!deposit?.id) {
-    console.error('ID לא קיים בהפקדה');
-    return;
+  /** trackBy ליציבות DOM וביצועים */
+  trackById(index: number, item: DepositType): number | string {
+    // אם אין id במודל שלך, החליפי לשם השדה המתאים (DepositTypeId וכד').
+    return (item as any).id ?? (item as any).depositTypeId ?? index;
   }
 
-  this.router.navigate(['/deposit', deposit.id]);
-}
+  goToDeposit(deposit: DepositType): void {
+    const name = (deposit?.name || '').trim();
+
+    if (name === 'בקשה להקפאת תשלומים') {
+      this.router.navigate(['/payments-freeze'], { queryParams: { type: 'deposit' } });
+      return;
+    }
+
+    if (name === 'בקשה למשיכת הפקדה') {
+      this.router.navigate(['/deposit-withdraw'], { queryParams: { type: 'deposit' } });
+      return;
+    }
+
+    if (!deposit?.id) {
+      console.error('ID לא קיים בהפקדה');
+      return;
+    }
+
+    this.router.navigate(['/deposit', deposit.id]);
+  }
 }

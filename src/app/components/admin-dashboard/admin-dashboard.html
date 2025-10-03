@@ -101,7 +101,7 @@
   </table>
 
   <hr />
-  <h2>טפסים חיצוניים</h2>
+  <!-- <h2>טפסים חיצוניים</h2>
   <table mat-table [dataSource]="forms" class="mat-elevation-z2" *ngIf="forms.length > 0">
     <ng-container matColumnDef="title">
       <th mat-header-cell *matHeaderCellDef> כותרת </th>
@@ -120,7 +120,7 @@
 
     <tr mat-header-row *matHeaderRowDef="['title', 'submittedBy', 'date']"></tr>
     <tr mat-row *matRowDef="let row; columns: ['title', 'submittedBy', 'date'];"></tr>
-  </table>
+  </table> -->
 
   <hr />
   <button mat-raised-button color="accent" (click)="syncUsers()">סנכרן משתמשים מהמערכת החיצונית</button>

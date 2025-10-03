@@ -13,7 +13,6 @@ html, body {
   display: grid;
   grid-template-rows: auto 1fr;
   padding-inline: clamp(12px, 3vw, 32px);
-  /* פס כחול – אותם ערכים כמו קודם */
   --band-top: clamp(220px, 28vh, 360px);
   --band-bottom: clamp(90px, 11vh, 150px);
 }
@@ -28,7 +27,13 @@ html, body {
 }
 
 /* ===== מעטפת הטופס ===== */
-.form-shell{ z-index: 1; display: grid; place-items: start center; padding-bottom: var(--band-bottom); }
+.form-shell{
+  z-index: 1;
+  display: grid;
+  place-items: start center;
+  padding-bottom: var(--band-bottom);
+  padding-top: clamp(16px, 3.5vh, 48px);
+}
 
 .card{
   width: 100%;
@@ -37,23 +42,22 @@ html, body {
   background: #F6F6F6;
   border: 1px solid rgba(25,42,74,.85);
   border-radius: 52px;
-  padding: clamp(24px, 2.6vw, 44px);   /* מעט יותר padding לכרטיס */
+  padding: clamp(24px, 2.6vw, 44px);
   box-shadow: 0 8px 24px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.04);
   overflow: clip;
   direction: rtl;
 }
 
-/* ===== כותרת בתוך הכרטיס ===== */
+/* ===== כותרת ===== */
 .header{ text-align:center; z-index:1; }
 .header--in-card{
   margin-block-start: clamp(10px, 1.2vw, 14px);
-  margin-block-end: clamp(16px, 2.2vw, 28px); /* ↑ יותר מרווח מתחת לכותרת לפני השדות */
+  margin-block-end: clamp(16px, 2.2vw, 28px);
 }
 .header .title{
   margin: 0 0 6px;
   color:#192A4A; letter-spacing:.03em;
   font-family:"Assistant", Arial, sans-serif; font-weight:800;
-  /* קטן יותר לפי הפיגמה */
   font-size: clamp(22px, 2.6vw, 34px);
   line-height: 1.25;
 }
@@ -69,9 +73,8 @@ $field-radius: 20px;
   display: grid;
   grid-template-columns: minmax(0,1fr) minmax(0,1fr);
   gap: clamp(10px, 1.4vw, 18px);
-  grid-auto-rows: $form-row-h;
+  grid-auto-rows: minmax($form-row-h, auto);
   grid-auto-flow: row dense;
-  /* להדגשה: עוד קצת רווח מהכותרת */
   margin-block-start: clamp(8px, 1.8vw, 20px);
 }
 @media (max-width:1024px){ .form-grid{ grid-template-columns:minmax(0,1fr); } }
@@ -83,7 +86,6 @@ $field-fs: clamp(18px, 1.6vw, 22px);
 $field-fw: 300;
 $field-ink: #192A4A;
 
-/* Material – בלי קו תחתון, גובה אחיד */
 :host ::ng-deep .mat-mdc-form-field .mdc-line-ripple{ display:none!important; }
 :host ::ng-deep .mat-mdc-form-field{
   width:100%!important; direction:rtl;
@@ -105,44 +107,47 @@ $field-ink: #192A4A;
   font-family:$field-ff!important; font-size:$field-fs!important; font-weight:$field-fw!important; color:$field-ink!important;
 }
 
-/* ===== לייבל במרכז, ואח"כ "עולה" כראוי ===== */
-:host ::ng-deep .mdc-text-field--filled .mdc-floating-label{
-  top:50%!important; transform:translateY(-50%) scale(1)!important;
-  right:16px!important; left:auto!important; pointer-events:none;
-  font-family:$field-ff!important; font-size:$field-fs!important; font-weight:$field-fw!important; color:$field-ink!important;
-  transition: transform .18s ease, opacity .18s ease;
+/* placeholder */
+:host ::ng-deep .mat-mdc-input-element::placeholder{
+  color: rgba(25,42,74,0.95);
+  opacity: 1;
 }
 
-/* כשיש ערך / בפוקוס – לוודא שהלייבל עולה בוודאות ולא חופף לטקסט */
-:host ::ng-deep .mdc-floating-label--float-above,
-:host ::ng-deep .mdc-text-field--label-floating .mdc-floating-label{
-  top:0!important;
-  transform: translateY(-36px) scale(.85)!important; /* היה -28px, הוגדל כדי שלא יחפוף לטקסט */
-  opacity: .9;
+/* הודעות שגיאה */
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper{
+  display:block !important;
+  height:auto !important;
+  margin: 4px 8px 0 8px !important;
+}
+:host ::ng-deep .mat-mdc-form-field-error{
+  font-family:$field-ff;
+  font-size: 12.5px;
+  color:#B00020;
+  line-height: 1.25;
 }
 
-/* ביטול subscript כדי לשמור גובה זהה */
-:host ::ng-deep .mat-mdc-form-field-subscript-wrapper{ display:none!important; height:0!important; margin:0!important; }
-
-/* ===== אייקונים 38×38 ומיקום נכון ===== */
+/* ===== אייקונים 38×38 ===== */
 $icon-box: 38px;
 $icon-inset: 12px;
 
+/* ← כאן השינוי העיקרי: רקע אפור */
 .cc-suffix{
   inline-size:$icon-box; block-size:$icon-box;
   display:flex; align-items:center; justify-content:center;
   border:1.5px solid #192A4A; border-radius:8px;
-  background:transparent; line-height:0; margin-inline-start:8px;
+  background:#D9D9D9; /* היה transparent */
+  line-height:0; margin-inline-start:8px;
 }
 :host ::ng-deep .mat-mdc-form-field .mat-mdc-form-field-icon-suffix{ padding-inline-end:$icon-inset !important; }
 .cc-suffix svg{ display:block; }
 
+/* select */
 :host ::ng-deep .cc-select .mat-mdc-select-arrow,
 :host ::ng-deep .cc-select .mat-mdc-select-arrow-wrapper{ display:none!important; }
 
 :host ::ng-deep .cc-date-toggle .mat-mdc-icon-button{
   width:$icon-box; height:$icon-box; padding:0; display:flex; align-items:center; justify-content:center;
-  border-radius:8px; border:1.5px solid #192A4A;
+  border-radius:8px; border:1.5px solid #192A4A; background:#D9D9D9;
 }
 :host ::ng-deep .cc-date-toggle .mat-mdc-button-touch-target{ width:$icon-box; height:$icon-box; }
 :host ::ng-deep .cc-date-toggle .mat-mdc-icon-button svg{
@@ -152,7 +157,26 @@ $icon-inset: 12px;
 :host ::ng-deep .cc-date-toggle .mat-ripple,
 :host ::ng-deep .cc-date-toggle .mat-mdc-focus-indicator{ display:none!important; }
 
-/* ===== כפתור „שלח טופס” – בגודל של שדה ===== */
+/* התאמות select */
+:host ::ng-deep .cc-select .mat-mdc-form-field-flex{
+  height: $form-row-h;
+  align-items: center;
+}
+:host ::ng-deep .cc-select .mat-mdc-form-field-infix{
+  display: flex; align-items: center; padding: 0 16px !important; min-height: $form-row-h;
+}
+:host ::ng-deep .cc-select .mat-mdc-select-trigger,
+:host ::ng-deep .cc-select .mat-mdc-select-value{
+  display: flex; align-items: center; width: 100%;
+}
+:host ::ng-deep .cc-select .mat-mdc-select-value-text{
+  width: 100% !important;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1; text-align: right; color: $field-ink !important;
+}
+:host ::ng-deep .cc-select.is-empty .mat-mdc-select-value-text{ opacity: .95; }
+
+/* כפתור שלח */
 .cta{
   inline-size:100%;
   block-size:$form-row-h;
@@ -170,26 +194,18 @@ $icon-inset: 12px;
 .cta__text{
   font-family:"Assistant", Arial, sans-serif;
   font-size:clamp(18px,1.6vw,22px);
-  font-weight:300;
-  color:#F6F6F6;
+  font-weight:300; color:#F6F6F6;
 }
 
-/* שורת הסיום: אימות בשמאל (עמודה 1), כפתור בימין (עמודה 2) */
+/* פריסת סיום */
 .form-grid .cc-field--confirm{ grid-column: 1 / 2; }
-.form-grid .cta--form{
-  grid-column: 2 / 3;
-  flex-direction: row-reverse; /* טקסט מימין, חץ משמאל */
-}
-
-/* מובייל – שניהם 100% אחד מתחת לשני */
+.form-grid .cta--form{ grid-column: 2 / 3; flex-direction: row-reverse; }
 @media (max-width:1024px){
   .form-grid .cc-field--confirm,
-  .form-grid .cta--form{
-    grid-column: 1 / -1;
-  }
+  .form-grid .cta--form{ grid-column: 1 / -1; }
 }
 
-/* ===== ביטול צבע אוטופיל בכרום ===== */
+/* ביטול צבע אוטופיל כרום */
 :host ::ng-deep input:-webkit-autofill,
 :host ::ng-deep input:-webkit-autofill:hover,
 :host ::ng-deep input:-webkit-autofill:focus{
@@ -197,4 +213,12 @@ $icon-inset: 12px;
   box-shadow:0 0 0 1000px #D9D9D9 inset!important;
   -webkit-text-fill-color:inherit!important; caret-color:inherit!important;
   transition:background-color 9999s ease-out 0s!important;
+}
+
+/* הודעת שגיאה גלובלית */
+.form-error{
+  margin: 10px 6px 0;
+  color:#B00020;
+  font-family:$field-ff;
+  font-size:13px;
 }

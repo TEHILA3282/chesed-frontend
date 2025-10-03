@@ -1,53 +1,169 @@
-.actions-container {
-  text-align: center;
-  margin: 2rem auto;
+:host { display: block; }
+
+/* ===== משתנים ===== */
+:root, :host{
+  --ink:#192A4A;
+  --paper:#F6F4F1;
+  --page:#F6F6F6;
+
+  /* גובה ההדר בפועל */
+  --header-h: 72px;
+
+  /* רצועת כחול תחתונה */
+  --band-h: clamp(240px, 34vh, 420px);
+
+  /* ריווח עליון מתחת להדר */
+  --top-gap: clamp(32px, 7vh, 96px);
+
+  /* בלוק הכותרות (גובה טקסטים) */
+  --title-h: clamp(30px, 2.35vw, 44px);
+  --subtitle-h: clamp(13px, .9vw, 15px);
+  --titles-block: clamp(56px, 9vh, 110px);
+
+  /* מרווחים */
+  --gap-x: clamp(28px, 3.4vw, 72px);
+  --gap-y: clamp(34px, 6vh, 72px);
+
+  /* ריווח נוסף בין הכותרת לבין הכרטיסים */
+  --cards-extra-gap: clamp(20px, 5vh, 60px);
+
+  /* גודל כרטיס */
+  --card-w: clamp(420px, 30vw, 568px);
+  --radius: clamp(28px, 2.5vw, 49px);
+
+  /* הגובה הפנוי למסך */
+  --viewport-free: calc(100dvh - var(--header-h) - var(--band-h));
+
+  /* גובה כרטיס מחושב כך ששתי שורות + מרווח ייכנסו */
+  --card-h: calc((var(--viewport-free) - var(--top-gap) - var(--titles-block) - var(--gap-y)) / 2);
+  --card-h-min: 140px;
+  --card-h-max: 200px;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  color: #444;
-  margin-bottom: 2rem;
-}
-
-.cards {
+/* ===== מעטפת הדף ===== */
+.actions-container{
+  position: fixed;
+  inset: var(--header-h) 0 0 0;   /* בין ההדר לתחתית */
+  background: var(--page);
+  overflow: hidden;               /* אין גלילה */
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* רצועת כחול בתחתית */
+.bottom-band{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: var(--band-h);
+  background: var(--ink);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* כותרות */
+.header{
+  z-index: 1;
+  text-align: center;
+  margin: var(--top-gap) 0 0;   /* ↓ מרווח קבוע מתחת ל-header */
+}
+.title{
+  margin: 0 0 .55rem;
+  font-family: 'Assistant', system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight: 800;
+  font-size: var(--title-h);
+  line-height: 1.2;
+  color: var(--ink);
+}
+.subtitle{
+  margin: 0;
+  font-family: 'Assistant', system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight: 300;
+  font-size: var(--subtitle-h);
+  color: var(--ink);
+  opacity: .9;
+}
+
+/* ===== גריד הכרטיסים ===== */
+.cards{
+  z-index: 1;
+  width: min(92vw, calc(var(--card-w) * 2 + var(--gap-x)));
+  height: calc(var(--viewport-free) - var(--top-gap) - var(--titles-block));
+  display: grid;
+  grid-template-columns: repeat(2, var(--card-w));
+  grid-auto-rows: clamp(var(--card-h-min), var(--card-h), var(--card-h-max));
+  column-gap: var(--gap-x);
+  row-gap: var(--gap-y);
   justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+  align-content: start;
+
+  /* ריווח נוסף מהכותרת */
+  margin-top: var(--cards-extra-gap);
 }
 
-.card {
-  background: #f9f9f9;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px  rgb(69, 51, 51);
-  padding: 2rem;
-  min-width: 220px;
-  max-width: 300px;
+/* כרטיסים */
+.card{
+  position: relative;
+  width: var(--card-w);
+  height: 100%;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: #F6F4F1;
+  display: grid; place-items: center;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: transform .16s ease;
+}
+.card:hover{ transform: translateY(-2px); }
+
+/* תחתונים בהירים */
+.cards > .card:nth-child(n+3){
+  background: var(--paper);
+  color: var(--ink);
 }
 
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+/* טקסט בכרטיס */
+.card .card__title{
+  margin: 0;
+  font-family: 'Assistant', system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 1.9vw, 34px);
+  text-align: center;
+  line-height: 1.2;
+  pointer-events: none;
 }
 
-.circle-btn {
-  background:  rgb(69, 51, 51);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  margin-top: 1rem;
-  cursor: pointer;
+/* קו דק בכרטיס */
+.card .card__divider{
+  position: absolute;
+  left: 5%; right: 5%;
+  bottom: 22%;
+  height: 1px;
+  background: #FFF;
+  opacity: .95;
+  border-radius: 1px;
+  pointer-events: none;
 }
+.cards > .card:nth-child(n+3) .card__divider{ background: var(--ink); }
 
-.arrow {
-  vertical-align: middle;
+/* חץ */
+.circle-btn{
+  position: absolute;
+  inset-inline-start: clamp(18px, 1.6vw, 26px);
+  top: 50%; transform: translateY(-58%);
+  width: clamp(34px, 3vw, 44px);
+  aspect-ratio: 1;
+  border: none; background: transparent;
+  color: currentColor;
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+.icon-arrow{ width: 72%; height: auto; display: block; }
+
+/* מובייל – עמודה אחת, עדיין בלי גלילה */
+@media (max-width: 980px){
+  .cards{
+    width: min(92vw, var(--card-w));
+    grid-template-columns: 1fr;
+    grid-auto-rows: calc((100% - var(--gap-y)) / 2);
+  }
 }

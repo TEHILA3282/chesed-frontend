@@ -1,30 +1,14 @@
 @use "sass:math";
 
 /* =========================
-   HOME – Layout נעול + טיפוגרפיה לפי פיגמה
+   HOME – פריסה גמישה
    ========================= */
 
-/* פונט ברירת מחדל */
 $ff: "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-
-/* צבעים/מידות – דסקטופ קבוע */
 $brand-blue: #192A4A;
 
-$container-w: 1100px;   /* רוחב הקונטיינר של 3 הכרטיסים */
-$card-w: 340px;         /* רוחב כרטיס */
-$card-h: 160px;         /* גובה כרטיס */
-$gap: 20px;             /* ריווח בין כרטיסים */
-
-$band-height: 320px;    /* גובה ה-blue band */
-$band-footer-h: 60px;   /* גובה פס תחתון בכרטיסי band */
-$band-radius: 46px;
-
-$search-w: 1040px;      /* רוחב שורת החיפוש בדסקטופ */
-$search-h: 96px;        /* גובה שורת החיפוש בדסקטופ */
-$search-inset: 8px;     /* כמה להרים מעל שפת ה-blue band */
-
-/* ===== משתני :root ===== */
-:root{ --header-h: 56px; }
+/* יחס כרטיסים מקורי: 340×160 => 2.125 */
+$card-aspect: 340/160;
 
 /* ===== בסיס דף ===== */
 html, body{
@@ -38,25 +22,41 @@ html, body{
 }
 *, *::before, *::after{ box-sizing: border-box; }
 
-/* ===== מעטפת הדף ===== */
+/* ===== מעטפת הדף =====
+   מקבעים למסך בין ההדר לתחתית – אין גלילה בעמוד הבית */
 .home-container{
-  position: relative;
+  position: fixed;
+  inset: var(--header-h, 56px) 0 0 0;  /* top right bottom left */
   display: flex;
   flex-direction: column;
   isolation: isolate;
+  overflow-y: clip;
 
-  min-height: calc(100svh - var(--header-h));
-  padding-top: var(--header-h);
+  /* === משתנים לשליטה מהירה על המראה === */
+  --container-w: 64%;                          /* רוחב פס הכרטיסים (גודל הכרטיסים) */
+  --cards-gap: clamp(14px, 2.2vw, 28px);
 
-  /* ❌ לא צריך ריפוד תחתון – זה מה שעשה את הגלילה */
-  padding-bottom: 0;
+  --band-h: 40vh;                              /* גובה ה-blue band */
+  --search-w: min(1040px, 90vw);               /* רוחב הפיל */
+  --search-h: clamp(72px, 12vh, 96px);         /* גובה הפיל */
+  --search-inset: clamp(8px, 1.4vw, 16px);     /* כמה הפיל "מטפס" מעל ה-band */
+
+  /* הכרטיסים ישבו מעט מעל ה-blue band */
+  --cards-above-band-gap: clamp(12px, 1.6vh, 24px);
+
+  /* לוגו – נמוך יותר וגדול יותר */
+  --brand-top-gap: clamp(56px, 9vh, 110px);    /* רווח מה-Header */
+  --brand-to-cards-gap: clamp(4px, 1.4vh, 12px); /* רווח בין לוגו לכרטיסים */
+  --brand-size-min: 120px;
+  --brand-size-fluid: 17vh;
+  --brand-size-max: 200px;
 }
 
-/* ===== Blue band קבוע בגובה/מיקום ===== */
+/* ===== ה-Blue band בתחתית המסך ===== */
 .blue-band{
   position: fixed;
-  inset: auto 0 0 0;
-  height: $band-height;
+  left: 0; right: 0; bottom: 0;
+  height: var(--band-h, 40vh);
   background: $brand-blue;
   z-index: 0;
   pointer-events: none;
@@ -67,9 +67,10 @@ html, body{
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-rows: auto auto;
+  height: 100%;
+  grid-template-rows: auto 1fr;                     /* לוגו + אזור הכרטיסים */
   justify-items: center;
-  row-gap: 10px;
+  row-gap: var(--brand-to-cards-gap);              /* מרווח בין לוגו לכרטיסים */
 }
 
 /* ===== Brand / לוגו ===== */
@@ -77,134 +78,117 @@ html, body{
   width: 100%;
   display: grid;
   justify-items: center;
-  row-gap: 6px;
-  margin: 0;
-  padding: 0;
+  margin-block-start: var(--brand-top-gap);        /* מרחק מה-Header */
 }
-.brand__icon{ width: 120px; height: 120px; object-fit: contain; }
-.brand__name{
-  margin: 0;
-  font-weight: 800;
-  font-size: 28px;
-  line-height: 1.08;
-  text-align: center;
+.brand__icon{
+  width:  clamp(var(--brand-size-min), var(--brand-size-fluid), var(--brand-size-max));
+  height: clamp(var(--brand-size-min), var(--brand-size-fluid), var(--brand-size-max));
+  object-fit: contain;
 }
 
-/* ===== אזור התוכן המרכזי ===== */
+/* ===== אזור הכרטיסים – מוצמד מעל ה-blue band ===== */
 .home-main-wrapper{
   width: 100%;
+  height: 100%;
   display: grid;
-  gap: 12px;
+  gap: 1.2%;
   justify-items: center;
+
+  /* מצמידים כלפי מטה ומשאירים מרווח קבוע מעל ה-band עצמו */
+  align-content: end;
+  padding: 0;
+  padding-bottom: calc(var(--band-h, 40vh) + var(--cards-above-band-gap));
+
   margin: 0;
+  overflow: clip;
 }
 
-/* ===== קונטיינר הכרטיסים – נעול ===== */
+/* ===== פס הכרטיסים ===== */
 .top-bar-container{
-  width: $container-w;
+  width: var(--container-w, 64%);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(3, $card-w);
-  justify-content: center;
-  gap: $gap;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--cards-gap, 24px);
+  row-gap: var(--cards-gap, 24px);
 }
+.top-bar-container > *{ min-width: 0; }
 
-/* ===== כרטיס בסיס ===== */
+/* ===== כרטיס כללי ===== */
 .info-box{
-  width: $card-w;
-  height: $card-h;
-  border-radius: 20px;
+  aspect-ratio: $card-aspect;                 /* שומר פרופורציה – גובה נגזר מהרוחב */
+  width: 100%;
+  border-radius: clamp(18px, 2vw, 26px);
   border: 1px solid rgba(25,42,74,.20);
   background: #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  box-shadow: 0 .4vw 1.4vw rgba(0,0,0,.06);
   overflow: hidden;
+
   display: grid;
-  grid-template-rows: 1fr auto;    /* גוף + פוטר (אם יש) */
+  grid-template-rows: 1fr auto;
   cursor: pointer;
 }
-
 .info-body{
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 8px;
-  padding: 14px;
+  gap: .8vw;
+  padding: 1.2vw;
   text-align: center;
   max-width: 88%;
   margin-inline: auto;
 
-  .icon{ font-size: 24px; color: #453333; }
   .info-sub{
     font-family: $ff;
     font-weight: 400;
-    font-size: 14.5px;
+    font-size: clamp(12px, 1.1vw, 14.5px);
     color: #666;
     line-height: 1.32;
-    letter-spacing: 0;
   }
 }
-
-/* כותרות – אותו גודל לכולן */
 .info-box .info-title{
   margin: 0;
   font-family: $ff;
-  font-size: 26px;
+  font-size: clamp(18px, 2vw, 26px);
   line-height: 1.06;
-  letter-spacing: .2px;
   text-align: center;
 }
 
-/* ===== כרטיסי Band (צדדים) – הוחזר ה-band הכחול ===== */
+/* ===== כרטיסי Band ===== */
 .info-box--band{
   position: relative;
-  border-radius: $band-radius;
+  border-radius: clamp(20px, 3.8vw, 40px);
   border: 1px solid rgba(25,42,74,.9);
-  grid-template-rows: calc(#{$card-h} - #{$band-footer-h}) $band-footer-h;
-  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  grid-template-rows: 62.5% 37.5%;
+  box-shadow: 0 .4vw 1.4vw rgba(0,0,0,.06);
 
-  /* ✅ יוצר את הפס הכחול התחתון */
   &::before{
     content: "";
     position: absolute;
     left: 0; right: 0; bottom: 0;
-    height: $band-footer-h;
+    height: 37.5%;
     background: $brand-blue;
     border-radius: inherit;
     z-index: 0;
     transition: height .45s cubic-bezier(.22,.61,.36,1);
   }
-
-  /* שומרים שהתוכן יהיה מעל ה-band */
   .info-body, .info-footer--band{ position: relative; z-index: 1; }
-
-  .info-title{
-    font-weight: 700; /* Bold */
-    color: $brand-blue;
-    transition: color .35s ease;
-  }
-
+  .info-title{ font-weight: 700; color: $brand-blue; }
   .info-footer--band{
-    height: $band-footer-h;
-    background: transparent;
-    color: #fff;
+    background: transparent; color: #fff;
     display: grid; place-items: center;
-    padding: 0 14px;
-    font-family: $ff;
+    padding: 0 1.2vw;
     font-weight: 700;
-    font-size: 15px;
+    font-size: clamp(12px, 1vw, 15px);
     line-height: 1.28;
     border-top: 1px solid rgba(25,42,74,.06);
-    transition: color .35s ease, border-color .35s ease;
   }
 }
-
-/* מצב ריחוף: כל הכרטיס מתמלא כחול */
 .info-box--band:hover,
 .info-box--band:focus-within{
   border-color: $brand-blue;
   &::before{ height: 100%; }
   .info-title{ color: #fff; }
-  .info-body .info-sub{ color: rgba(255,255,255,.92); }
   .info-footer--band{ border-top-color: transparent; color: #fff; }
 }
 
@@ -214,66 +198,35 @@ html, body{
   overflow: hidden;
   background: #0F2343;
   color: #fff;
-  border-color: transparent;
-  border-radius: 40px;
-  box-shadow: 0 10px 22px rgba(0,0,0,.16);
-
-  .info-body{ position: relative; z-index: 1; }
-  .info-title{
-    font-weight: 800;   /* ExtraBold */
-    color: #fff;
-  }
-  .info-sub--primary{
-    font-family: $ff;
-    font-weight: 300;   /* Light */
-    font-size: 18.05px; /* ~18.03 */
-    line-height: 1.32;
-    letter-spacing: 0;
-    color: #F8F7F3;
-  }
-
-  &::before{
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(255,255,255,.08), transparent 60%);
-    opacity: 0; transition: opacity .4s ease; z-index: 0;
-  }
-  &:hover::before, &:focus-within::before{ opacity: 1; }
+  border-radius: clamp(24px, 3.2vw, 36px);
+  box-shadow: 0 1vw 2.2vw rgba(0,0,0,.16);
 }
 
-/* =========================
-   Search bar anchored to blue band
-   ========================= */
+/* ===== שורת החיפוש – פיל קבוע על ה-band ===== */
 .search-band__container{
-  inline-size: $search-w;     /* 1040px */
-  block-size: $search-h;      /* 96px */
+  inline-size: var(--search-w, 90vw);
+  block-size: var(--search-h, 96px);
   border-radius: 48px;
   background: #F6F6F6 !important;
-  box-shadow: 0 6px 22px rgba(0,0,0,.12) !important;
+  box-shadow: 0 .6vw 2.2vw rgba(0,0,0,.12) !important;
 
-  /* עיגון קבוע ל-blue band */
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: calc(#{$band-height} - #{$search-h} - #{$search-inset});
+  bottom: calc(var(--band-h, 40vh) - var(--search-h, 96px) - var(--search-inset, 12px));
   z-index: 20;
+
   display: grid;
   place-items: center;
 }
-
-/* טיפוגרפיה לחיפוש */
 .search-band__container input,
 .search-band__container textarea{ font-family: $ff; }
 .search-band__container ::placeholder{
   font-family: $ff;
-  font-weight: 200;   /* ExtraLight */
-  font-size: 26px;    /* ~25.99 */
+  font-weight: 200;
+  font-size: clamp(18px, 2.1vw, 26px);
   line-height: 1.1;
-  letter-spacing: 0;
   color: #1924AA;
-}
-.search-band__container .search-wrapper button{
-  box-shadow: 0 6px 18px rgba(0,0,0,.18), 0 0 0 6px #F6F6F6 !important;
 }
 
 /* ===== “מופעל על ידי” ===== */
@@ -281,50 +234,59 @@ html, body{
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 24px;
+  bottom: 2.4vh;
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  height: 62px;
-  direction: rtl;
-  white-space: nowrap;
+  gap: 1.2vw;
+  height: 6.2vh;
   color: #fff;
   font-family: $ff;
 }
 .madeby__logo{
-  width: 62px; height: 62px; border-radius: 50%; object-fit: contain;
-  background: #fff; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  width: 6.2vh; height: 6.2vh; border-radius: 50%;
+  object-fit: contain;
+  background: #fff; border: 2px solid #fff;
+  box-shadow: 0 .2vw .6vw rgba(0,0,0,.15);
 }
-.madeby__divider{ width: 1px; height: 34px; background: #fff; }
-.madeby__label{ display: flex; flex-direction: column; font-weight: 800; font-size: 16px; line-height: 1; }
+.madeby__divider{ width: 1px; height: 3.4vh; background: #fff; }
+.madeby__label{ display: flex; flex-direction: column; font-weight: 800; font-size: clamp(12px, 1.1vw, 16px); line-height: 1; }
 
-/* ===== רספונסיביות מינימלית – בלי קפיצות ===== */
-
-/* Tablet: שתי עמודות קבועות */
+/* ===== רספונסיביות ===== */
 @media (max-width: 1200px){
-  .top-bar-container{
-    width: calc(2 * #{$card-w} + #{$gap});
-    grid-template-columns: repeat(2, $card-w);
-  }
+  .top-bar-container{ grid-template-columns: repeat(2, 1fr); }
+  .home-container{ --container-w: 70%; }
 }
-
-/* Mobile: עמודה אחת קבועה */
 @media (max-width: 720px){
+  .home-container{
+    --container-w: 86%;
+    --band-h: 42vh;
+    --search-w: 92vw;
+    --search-inset: 3%;
+    --brand-top-gap: clamp(36px, 5.5vh, 60px);
+    --brand-to-cards-gap: clamp(8px, 2.4vh, 20px);
+    --brand-size-min: 100px;
+    --brand-size-fluid: 15vh;
+    --brand-size-max: 168px;
+    --cards-above-band-gap: clamp(12px, 2vh, 24px);
+  }
   .top-bar-container{
-    width: $card-w;
     grid-template-columns: 1fr;
-    gap: 16px;
+    row-gap: clamp(12px, 4vw, 22px);
   }
-
-  .search-band__container{
-    inline-size: $card-w;   /* 340px */
-    block-size: 88px;
-    border-radius: 44px;
-
-  
-    bottom: calc(#{$band-height} - 88px - #{$search-inset});
-  }
-
-  .made-by-inline{ display: none; }
+  .madeby__inline{ display: none; }
+}
+/* ===== רספונסיביות לגובה (שומרי גובה) ===== */
+@media (max-height: 800px){
+  .home-container{
+    --band-h: 36vh;
+    --brand-top-gap: clamp(32px, 6vh, 64px);
+  --brand-size-min: 160px;   /* במקום 120px */
+  --brand-size-fluid: 22vh;  /* במקום 17vh */
+  --brand-size-max: 240px; 
+    --cards-to-search-gap: clamp(19px, 2.8vh, 40px);  }
+}
+@media (max-height: 680px){
+  /* אם המסך קצר במיוחד – מרשים גלילה עדינה במקום חפיפה */
+  .home-container{ overflow-y: auto; }
 }

@@ -1,15 +1,32 @@
-<div class="actions-container">
-  <h2 class="title">בחרו סוג הלוואה</h2>
-  <p class="subtitle">בחרו את סוג ההלוואה הרצוי שברצונכם לבצע</p>
+<section class="actions-container" dir="rtl" aria-labelledby="loansTitle">
+  <!-- רצועת כחול מודבקת לתחתית -->
+  <div class="bottom-band" aria-hidden="true"></div>
 
-  <div class="cards">
+  <header class="header">
+    <h2 id="loansTitle" class="title">בחרו סוג הלוואה</h2>
+    <p class="subtitle">בחרו את סוג ההלוואה הרצוי שברצונכם לבצע</p>
+  </header>
+
+  <div class="cards" role="list" *ngIf="loanTypes?.length">
     <div
       class="card"
-      *ngFor="let loan of loanTypes"
+      role="button"
+      tabindex="0"
+      *ngFor="let loan of loanTypes; index as i"
       (click)="goToLoan(loan)"
+      [attr.aria-label]="loan?.name || 'סוג הלוואה'"
+      [class.card--light]="i >= 2"
     >
-      <h3>{{ loan.name }}</h3>
-      <button class="circle-btn"><span class="arrow">⬅</span></button>
+      <h3 class="card__title">{{ loan.name }}</h3>
+      <i class="card__divider" aria-hidden="true"></i>
+
+      <button class="circle-btn" type="button" tabindex="-1" aria-hidden="true">
+        <svg class="icon-arrow" viewBox="0 0 54 12" focusable="false">
+          <path d="M0.6 6h49m-8-5 7 5-7 5"
+                fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </div>
-</div>
+</section>

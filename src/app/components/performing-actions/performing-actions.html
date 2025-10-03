@@ -1,26 +1,46 @@
-<div class="actions-container">
-  <h2 class="title">ביצוע פעולות</h2>
-  <p class="subtitle">בחרו את הפעולה הרצויה שברצונכם לבצע</p>
+<section class="actions-page" dir="rtl" aria-labelledby="actionsTitle">
+  <!-- פס כחול תחתון (מאחורי הגלולות) -->
+  <div class="bottom-band" aria-hidden="true"></div>
 
-  <div class="cards">
-    <div class="card" (click)="navigateTo('loans-list')">
-      <h3>הלוואות</h3>
-      <p>פעולות בהלוואות בקשות, שטרי חוב, ערבים, הקפאות ועוד</p>
-      <button><span class="arrow">⬅</span></button>
+  <div class="container">
+    <header class="header">
+      <h1 id="actionsTitle" class="title">ביצוע פעולות</h1>
+      <p class="sub">בחרו את הפעולה שברצונכם לבצע</p>
+    </header>
+
+    <div class="list">
+      <!-- הלוואות -->
+      <button class="pill pill--dark" type="button" (click)="navigateTo('/loans-list')" aria-label="הלוואות">
+        <span class="pill__title">הלוואות</span>
+        <span class="pill__desc ellipsis">פעולות בהלוואות, שטרי חוב, ערבים, הקפאות ועוד…</span>
+        <span class="pill__arrow" aria-hidden="true">
+          <svg class="icon-arrow" viewBox="0 0 54 12" focusable="false">
+            <path d="M53.4 6H4m0 0l5-5M4 6l5 5" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </span>
+      </button>
+
+      <!-- הפקדות -->
+      <button class="pill pill--dark" type="button" (click)="navigateTo('/deposits')" aria-label="הפקדות">
+        <span class="pill__title">הפקדות</span>
+        <span class="pill__desc ellipsis">פעולות בהפקדות, חסכונות, הקפאות ועוד…</span>
+        <span class="pill__arrow" aria-hidden="true">
+          <svg class="icon-arrow" viewBox="0 0 54 12" focusable="false">
+            <path d="M53.4 6H4m0 0l5-5M4 6l5 5" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </span>
+      </button>
+
+      <!-- עדכון פרטים -->
+      <button class="pill pill--light" type="button" (click)="navigateTo('/update-details')" aria-label="עדכון פרטים">
+        <span class="pill__title">עדכון פרטים</span>
+        <span class="pill__desc ellipsis">עדכון פרטים אישיים, פרטי חשבון בנק ועוד…</span>
+        <span class="pill__arrow" aria-hidden="true">
+          <svg class="icon-arrow" viewBox="0 0 54 12" focusable="false">
+            <path d="M53.4 6H4m0 0l5-5M4 6l5 5" fill="none" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </span>
+      </button>
     </div>
-
-    <div class="card" (click)="navigateTo('deposits')">
-      <h3>הפקדות</h3>
-      <p>פעולות בהפקדות הפקדות, חסכונות משיכות, תכנית נישואי הילדים ועוד</p>
-      <button><span class="arrow">⬅</span></button>
-    </div>
-
-    <div class="card" (click)="navigateTo('update-details')">
-      <h3>עדכון פרטים</h3>
-      <p>עדכון פרטים אישיים ופרטי חשבון בנק ועוד</p>
-      <button><span class="arrow">⬅</span></button>
-    </div>
-
-   
   </div>
-</div>
+</section>

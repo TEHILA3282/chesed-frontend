@@ -1,25 +1,32 @@
-<div class="freeze-page">
-  <h2 class="main-title">{{ title() }}</h2>
-  <p class="subtitle">{{ subtitle() }}</p>
-</div>
+<section class="freeze-screen" dir="rtl" aria-labelledby="freezeTitle">
+  <!-- רצועה כחולה דבוקה לתחתית (קבועה) -->
+  <div class="bottom-band" aria-hidden="true"></div>
 
-<form [formGroup]="form" dir="rtl" class="freeze-form" (ngSubmit)="submit()">
-  <mat-form-field appearance="fill" class="full">
-    <mat-label>כתבו את סיבת הבקשה</mat-label>
-    <textarea matInput formControlName="reason" rows="6"></textarea>
-    <mat-hint align="end">  {{ form.controls.reason.value.length || 0 }}/1000</mat-hint>
-  </mat-form-field>
+  <!-- כרטיס -->
+  <div class="card">
+    <header class="card__header">
+      <h1 id="freezeTitle" class="title">{{ title() }}</h1>
+      <small class="subtitle" *ngIf="subtitle()">{{ subtitle() }}</small>
+    </header>
 
-  <div class="ack-box">
-    <mat-checkbox formControlName="acknowledged">
-      {{ ackText() }}
-    </mat-checkbox>
+    <form [formGroup]="form" class="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="fill" class="field field--textarea">
+        <mat-label>כתבו את סיבת הבקשה*</mat-label>
+        <textarea matInput formControlName="reason" rows="6" maxlength="1000"></textarea>
+        <mat-hint align="end">{{ form.controls.reason.value?.length || 0 }}/1000</mat-hint>
+      </mat-form-field>
+
+      <!-- שורת אישור – עיגול מימין לטקסט -->
+      <div class="ack-row">
+        <mat-checkbox class="ack-row__check" formControlName="acknowledged" aria-label="אישרתי וקראתי"></mat-checkbox>
+        <span class="ack-row__text">{{ ackText() }}</span>
+      </div>
+
+      <div class="actions">
+        <button class="outline-btn" type="submit" [disabled]="form.invalid || loading()">
+          שליחת בקשה לאישור
+        </button>
+      </div>
+    </form>
   </div>
-
-  <div class="actions">
-    <button mat-raised-button color="primary" type="submit"
-            [disabled]="form.invalid || loading()">
-      שליחת בקשה לאישור
-    </button>
-  </div>
-</form>
+</section>

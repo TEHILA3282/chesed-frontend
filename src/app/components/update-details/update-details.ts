@@ -1,3 +1,4 @@
+// Path: Frontend/src/app/components/update-details/update-details.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,6 +13,19 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { environment } from '../../environments/environment';
+
+type CurrentUserDto = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  landlineNumber?: string;
+  dateOfBirth?: string; // "yyyy-MM-dd"
+  personalStatus?: string;
+  street?: string;
+  city?: string;
+  houseNumber?: string;
+};
 
 @Component({
   selector: 'app-update-details',
@@ -44,7 +58,6 @@ export class UpdateDetailsComponent implements OnInit {
     private http: HttpClient
   ) {}
 
-
   private parseDateOnly(s: string): Date {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
     if (m) {
@@ -61,7 +74,7 @@ export class UpdateDetailsComponent implements OnInit {
     const y = dd.getFullYear();
     const m = String(dd.getMonth() + 1).padStart(2, '0');
     const day = String(dd.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}T00:00:00`; 
+    return `${y}-${m}-${day}T00:00:00`;
   }
 
   ngOnInit(): void {
@@ -86,19 +99,22 @@ export class UpdateDetailsComponent implements OnInit {
       hasDirectDebit: [false]
     });
 
-    this.http.get<any>(`${this.apiUrl}/auth/get-current-user`).subscribe({
-      next: u => this.detailsForm.patchValue({
-        firstName: u.firstName ?? '',
-        lastName: u.lastName ?? '',
-        phoneNumber: u.phone ?? '',
-        landlineNumber: u.phone2 ?? '',
-        email: u.email ?? '',
-        city: u.city ?? '',
-        street: u.street ?? '',
-        houseNumber: u.houseNumber ?? '',
-        personalStatus: ['רווק/ה','נשוי/ה','גרוש/ה','אלמן/ה'][u.maritalStatus ?? 0] ?? '',
-        dateOfBirth: u.birthDate ? this.parseDateOnly(u.birthDate) : ''
-      }),
+    // ---- כאן המפתח: משתמשים בשמות השדות החדשים מה-API ----
+    this.http.get<CurrentUserDto>(`${this.apiUrl}/auth/get-current-user`).subscribe({
+      next: (u) => {
+        this.detailsForm.patchValue({
+          firstName: u.firstName ?? '',
+          lastName: u.lastName ?? '',
+          email: u.email ?? '',
+          phoneNumber: u.phoneNumber ?? '',
+          landlineNumber: u.landlineNumber ?? '',
+          city: u.city ?? '',
+          street: u.street ?? '',
+          houseNumber: u.houseNumber ?? '',
+          personalStatus: u.personalStatus ?? '',
+          dateOfBirth: u.dateOfBirth ? this.parseDateOnly(u.dateOfBirth) : ''
+        });
+      },
       error: err => {
         console.error('שגיאה בטעינת נתוני משתמש:', err);
         this.snackBar.open('שגיאה בטעינת נתונים', '', { duration: 3000 });

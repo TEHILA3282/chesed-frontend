@@ -1,5 +1,5 @@
 /* ==========================
-   app-global-search (SCSS) – FLUID
+   app-global-search – FLUID
    ========================== */
 
 :host{
@@ -11,7 +11,7 @@
 /* לא חוסמים גלילה אנכית גלובלית, רק אופקית */
 html, body { overflow-x: hidden; }
 
-/* ------------ מצב ברירת מחדל ------------ */
+/* ------------ מצב ברירת מחדל (מחוץ לפיל) ------------ */
 .search-wrapper{
   position: relative;
   display: grid;
@@ -74,8 +74,6 @@ html, body { overflow-x: hidden; }
   direction: rtl;
   contain: paint;
 }
-
-/* פייד עדין בתחתית */
 .results-dropdown::after{
   content: "";
   position: sticky;
@@ -88,7 +86,6 @@ html, body { overflow-x: hidden; }
   border-bottom-left-radius: clamp(32px, 6vw, 52px);
   border-bottom-right-radius: clamp(32px, 6vw, 52px);
 }
-
 .result-item{
   display: flex;
   align-items: center;
@@ -102,21 +99,15 @@ html, body { overflow-x: hidden; }
 }
 .result-item + .result-item{ border-top: 1px solid #DFE5EE; }
 .result-item:hover{ background: #F0F3F8; }
-
-/* fallback קטן */
 .results-dropdown .result-item:last-child{
   margin-bottom: clamp(8px, 1.4vh, 16px);
 }
-
-/* עיצוב פס גלילה (כרום/אדג') */
+/* פס גלילה (כרום/אדג') */
 .results-dropdown::-webkit-scrollbar { width: clamp(8px, 1vw, 10px); }
 .results-dropdown::-webkit-scrollbar-track { background: transparent; }
-.results-dropdown::-webkit-scrollbar-thumb {
-  background: rgba(25,42,74,.25);
-  border-radius: 10px;
-}
+.results-dropdown::-webkit-scrollbar-thumb { background: rgba(25,42,74,.25); border-radius: 10px; }
 
-/* ------------ מצב בתוך ה"פיל" ------------ */
+/* ------------ מצב בתוך הפיל .search-band__container ------------ */
 :host-context(.search-band__container){
   position: relative;
   z-index: 10;
@@ -130,6 +121,7 @@ html, body { overflow-x: hidden; }
   z-index: 11;
 }
 
+/* גובה השדה = גובה הפיל; הכפתור עגול וסקלבילי */
 :host-context(.search-band__container) .search-wrapper input{
   all: unset;
   inline-size: 100%;
@@ -138,12 +130,13 @@ html, body { overflow-x: hidden; }
   color: #192A4A;
   font-weight: 600;
 
-  /* שומר 96px בדסקטופ, מצטמצם קלות במובייל */
-  line-height: var(--field-h, clamp(88px, 7.2vh, 96px));
+  /* טקסט ממורכז אנכית ע"י line-height שווה לגובה הקונטיינר */
+  line-height: 100%;
   padding-block: 0;
+  /* ריווח מימין לטקסט, ומשמאל נשאיר מקום לכפתור */
   padding-inline:
-    var(--text-right-pad, clamp(44px, 3.5vw, 56px))
-    calc(var(--btn-size, clamp(60px, 7.2vh, 76px)) + var(--pad-edge, clamp(16px, 1.8vw, 24px)));
+    clamp(44px, 3.5vw, 56px)
+    calc( clamp(60px, 9vh, 76px) + clamp(16px, 1.8vw, 24px) );
   font-size: clamp(18px, 1.5vw, 20px);
 }
 :host-context(.search-band__container) .search-wrapper input::placeholder{
@@ -152,18 +145,16 @@ html, body { overflow-x: hidden; }
 
 :host-context(.search-band__container) .search-wrapper button{
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 50%; transform: translateY(-50%);
   inset-inline-end: clamp(16px, 1.6vw, 23px);
-  inline-size: var(--btn-size, clamp(60px, 7.2vh, 76px));
-  block-size: var(--btn-size, clamp(60px, 7.2vh, 76px));
+
+  /* הכפתור נסמך על גובה הפיל, לא על פיקסלים */
+  block-size: clamp(60px, 9vh, 76px);
+  inline-size: clamp(60px, 9vh, 76px);
   border-radius: 50%;
-  border: 0;
-  background: #192A4A;
-  color: #fff;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+
+  border: 0; background: #192A4A; color: #fff;
+  display: grid; place-items: center; cursor: pointer;
   box-shadow:
     0 6px 18px rgba(0,0,0,.18),
     0 0 0 clamp(4px, .5vw, 6px) rgba(255,255,255,.9);
@@ -183,11 +174,11 @@ html, body { overflow-x: hidden; }
 /* LTR */
 [dir="ltr"] :host-context(.search-band__container) .search-wrapper input{
   padding-inline:
-    calc(var(--btn-size, clamp(60px, 7.2vh, 76px)) + var(--pad-edge, clamp(16px, 1.8vw, 24px)))
-    var(--text-right-pad, clamp(44px, 3.5vw, 56px));
+    calc( clamp(60px, 9vh, 76px) + clamp(16px, 1.8vw, 24px) )
+    clamp(44px, 3.5vw, 56px);
 }
 
-/* רספונסיביות – טאץ' מינימלי, רוב העבודה ע"י clamp */
+/* טאץ' קל למובייל */
 @media (max-width: 720px){
   :host-context(.search-band__container) .search-wrapper input{
     font-size: clamp(16px, 2.6vw, 18px);

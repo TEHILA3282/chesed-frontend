@@ -18,56 +18,60 @@ import { FreezeRequestComponent } from './components/payments-freeze/payments-fr
 import { DepositWithdrawComponent } from './components/deposit-withdraw/deposit-withdraw';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { RejectedDialogComponent } from './components/rejected-dialog/rejected-dialog';
-import { SlugGuard } from './guards/slug.guard';  
-import { ProgramsHostComponent } from './programs/programs-host';
-
+import { SlugGuard } from './guards/slug.guard';
+import { ProgramsPageComponent } from './programs/programs.page'; 
+import { WaitingGuard } from './guards/waiting.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
   { path: 'register', component: Register, canActivate: [NoAuthGuard] },
+
   { path: 'awaiting-approval', component: AwaitingApprovalComponent },
   { path: 'rejected', component: RejectedDialogComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'messages', component: MessagesBoxComponent, canActivate: [AuthGuard] },
-  { path: 'performing-actions', component: PerformingActionsComponent, canActivate: [AuthGuard] },
-  { path: 'account', component: AccountActionsComponent, canActivate: [AuthGuard] },
-  { path: 'deposit', component: DepositComponent, canActivate: [AuthGuard] },
-  { path: 'deposit/:id', component: DepositComponent, canActivate: [AuthGuard] },
-  { path: 'deposits', component: DepositListComponent, canActivate: [AuthGuard] },
-  { path: 'loan/:id', component: LoanComponent, canActivate: [AuthGuard] },
-  { path: 'loans-list', component: LoansListComponent, canActivate: [AuthGuard] },
-  { path: 'payments-freeze', component: FreezeRequestComponent, canActivate: [AuthGuard] },
-  { path: 'deposit-withdraw', component: DepositWithdrawComponent, canActivate: [AuthGuard] },
-  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'update-details', component: UpdateDetailsComponent, canActivate: [AuthGuard] },
 
-
+  { path: 'home', component: HomeComponent, canActivate: [WaitingGuard] },
+  { path: 'messages', component: MessagesBoxComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'performing-actions', component: PerformingActionsComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'account', component: AccountActionsComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'deposit', component: DepositComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'deposit/:id', component: DepositComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'deposits', component: DepositListComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'loan/:id', component: LoanComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'loans-list', component: LoansListComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'payments-freeze', component: FreezeRequestComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'deposit-withdraw', component: DepositWithdrawComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'update-details', component: UpdateDetailsComponent, canActivate: [AuthGuard, WaitingGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard, AdminGuard, WaitingGuard] },
 
   {
     path: ':slug',
     canActivate: [SlugGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
+
       { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
       { path: 'register', component: Register, canActivate: [NoAuthGuard] },
+
       { path: 'awaiting-approval', component: AwaitingApprovalComponent },
       { path: 'rejected', component: RejectedDialogComponent },
-      { path: 'home', component: HomeComponent },
-      { path: 'messages', component: MessagesBoxComponent, canActivate: [AuthGuard] },
-      { path: 'performing-actions', component: PerformingActionsComponent, canActivate: [AuthGuard] },
-      { path: 'account', component: AccountActionsComponent, canActivate: [AuthGuard] },
-      { path: 'deposit', component: DepositComponent, canActivate: [AuthGuard] },
-      { path: 'deposit/:id', component: DepositComponent, canActivate: [AuthGuard] },
-      { path: 'deposits', component: DepositListComponent, canActivate: [AuthGuard] },
-      { path: 'loan/:id', component: LoanComponent, canActivate: [AuthGuard] },
-      { path: 'loans-list', component: LoansListComponent, canActivate: [AuthGuard] },
-      { path: 'payments-freeze', component: FreezeRequestComponent, canActivate: [AuthGuard] },
-      { path: 'deposit-withdraw', component: DepositWithdrawComponent, canActivate: [AuthGuard] },
-      { path: 'update-details', component: UpdateDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'admin', component: AdminComponent, canActivate: [AuthGuard, AdminGuard] },
 
-      { path: 'programs', component: ProgramsHostComponent },
+      { path: 'home', component: HomeComponent, canActivate: [WaitingGuard] },
+      { path: 'messages', component: MessagesBoxComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'performing-actions', component: PerformingActionsComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'account', component: AccountActionsComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'deposit', component: DepositComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'deposit/:id', component: DepositComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'deposits', component: DepositListComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'loan/:id', component: LoanComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'loans-list', component: LoansListComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'payments-freeze', component: FreezeRequestComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'deposit-withdraw', component: DepositWithdrawComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'update-details', component: UpdateDetailsComponent, canActivate: [AuthGuard, WaitingGuard] },
+      { path: 'admin', component: AdminComponent, canActivate: [AuthGuard, AdminGuard, WaitingGuard] },
+
+      { path: 'programs', component: ProgramsPageComponent, canActivate: [WaitingGuard] },
 
       { path: '**', redirectTo: 'home' }
     ]
@@ -75,4 +79,3 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: 'home' }
 ];
-

@@ -8,7 +8,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ForgotPassword } from '../forgot-password/forgot-password';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { InstitutionService, InstitutionConfig } from '../../services/institution.service';
 import { AccountActionsService } from '../../services/account-actions.service';
 import { RejectedDialogComponent } from '../rejected-dialog/rejected-dialog';
@@ -35,7 +35,7 @@ export class LoginComponent {
   form: FormGroup;
   errorMessage = '';
   loading = false;
-  institution!: InstitutionConfig; // מוגדר ומאותחל בקונסטרקטור
+  institution!: InstitutionConfig;
 
   constructor(
     private dialog: MatDialog,
@@ -45,25 +45,39 @@ export class LoginComponent {
     public institutionService: InstitutionService,
     private actionsService: AccountActionsService,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {
     this.institution = this.institutionService.getInstitution();
     this.form = this.fb.group({
       emailOrId: ['', Validators.required],
       password: ['', Validators.required]
     });
-
-    setTimeout(() => this.form.updateValueAndValidity(), 0);
   }
 
-  /** מפצל את שם המוסד לשתי שורות: מילה ראשונה בשורה עליונה, השאר בשורה שניה */
+  ngOnInit() {
+    // 1) מה-history.state
+    const stateUsername = (history.state && history.state.username) ? String(history.state.username) : '';
+    // 2) גיבוי: מה-Query Param ?u=
+    const qpUsername = this.route.snapshot.queryParamMap.get('u') ?? '';
+
+    const username = stateUsername || qpUsername;
+    if (username) {
+      this.form.patchValue({ emailOrId: username });
+    }
+
+    // מאפסים את ה-state (לא קריטי, אבל שומר על ניקיון)
+    try { history.replaceState({}, document.title, location.href); } catch {}
+
+    // מעודד את מנהל הסיסמאות למלא את הסיסמה השמורה
+    queueMicrotask(() => (document.getElementById('login-username') as HTMLInputElement | null)?.focus());
+  }
+
   formatInstitutionName(name: string): string {
     if (!name) return '';
-    const cleaned = name.replace(/\s+/g, ' ').trim();  // נורמליזציה לרווחים
+    const cleaned = name.replace(/\s+/g, ' ').trim();
     const idx = cleaned.indexOf(' ');
-    return idx > -1
-      ? `${cleaned.slice(0, idx)}<br>${cleaned.slice(idx + 1)}`
-      : cleaned;
+    return idx > -1 ? `${cleaned.slice(0, idx)}<br>${cleaned.slice(idx + 1)}` : cleaned;
   }
 
   onSubmit() {
@@ -137,21 +151,18 @@ export class LoginComponent {
       });
   }
 
-openForgotPassword() {
-  this.dialog.open(ForgotPassword, {
-    panelClass: 'reset-dialog',     
-    backdropClass: 'reset-backdrop',
-    width: 'auto',
-    maxWidth: '100vw',
-    height: 'auto',
-    maxHeight: '100vh',
-    autoFocus: false,
-    restoreFocus: false
-  });
-}
-
-
-
+  openForgotPassword() {
+    this.dialog.open(ForgotPassword, {
+      panelClass: 'reset-dialog',
+      backdropClass: 'reset-backdrop',
+      width: 'auto',
+      maxWidth: '100vw',
+      height: 'auto',
+      maxHeight: '100vh',
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
 
   getLogoPath(): string {
     const logo = this.institution.logo || '';

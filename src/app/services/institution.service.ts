@@ -37,6 +37,11 @@ export class InstitutionService {
       programsTitle: 'פרסומת הגמ"ח – חבורת חסד',
       programsSubtitle: 'מידע קצר על פעילויות ושותפים'
     },
+        hafetzchesed: {
+      id: 4, name: ' חפץ חסד', logo: 'assets/hafetz.png', themeColor: '#e67e22', slug: 'hafetzchesed',
+      programsTitle: 'פרסומת לגמ"ח – כאן יוכל כל גמ"ח להכניס את התוכן השיווקי שלו',
+      programsSubtitle: 'מידע קצר על פעילויות ושותפים'
+    },
     localhost: {
       id: 1, name: 'הגמ"ח המרכזי (localhost)', logo: 'assets/logo-localhost.png', themeColor: '#222', slug: 'localhost',
       programsTitle: 'תוכניות ושותפים – (localhost)',

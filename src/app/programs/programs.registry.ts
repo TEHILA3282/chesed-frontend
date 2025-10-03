@@ -1,12 +1,12 @@
-import { Type, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { InstitutionService } from '../services/institution.service';
-import { PromoChavuratChesedComponent } from './tenants/chavuratchesed/promo-chavuratchesed/promo-chavuratchesed';
+import { ProgramsData } from './programs.model';
+import { ChavuratChesedPrograms } from './tenants/chavurat-chesed.programs';
 
-export function resolveProgramsComponent(): Type<any> {
-  const instSvc = inject(InstitutionService);
-  const slug = instSvc.getSlug();
-  const map: Record<string, Type<any>> = {
-    chavuratchesed: PromoChavuratChesedComponent,
+export function resolveProgramsData(): ProgramsData {
+  const slug = inject(InstitutionService).getSlug();
+  const map: Record<string, ProgramsData> = {
+    'chavuratchesed': ChavuratChesedPrograms,
   };
-  return map[slug] ?? PromoChavuratChesedComponent;
+  return map[slug] ?? ChavuratChesedPrograms;
 }

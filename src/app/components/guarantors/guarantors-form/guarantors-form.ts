@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
@@ -27,8 +27,11 @@ type GuarantorDTO = {
   templateUrl: './guarantors-form.html',
   styleUrls: ['./guarantors-form.scss']
 })
-export class GuarantorsFormComponent {
+export class GuarantorsFormComponent implements OnChanges {
   @Output() guarantorsChange = new EventEmitter<GuarantorDTO[]>();
+
+  /** >>> חדש: אינדקס הטאב הפעיל שמגיע מההורה (0 | 1 | 2) */
+  @Input() activeIndex = 0;
 
   form: FormGroup;
 
@@ -45,11 +48,19 @@ export class GuarantorsFormComponent {
     this.emitGuarantors();
   }
 
-  get guarantorsArray(): FormArray {
-    return this.form.get('guarantors') as FormArray;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activeIndex']) {
+      // לוודא שהאינדקס נשאר בטווח 0..2
+      this.activeIndex = Math.max(0, Math.min(2, Number(this.activeIndex) || 0));
+    }
   }
-  get guarantorFormGroups(): FormGroup[] {
-    return this.guarantorsArray.controls as FormGroup[];
+
+  get guarantorsArray(): FormArray { return this.form.get('guarantors') as FormArray; }
+  get guarantorFormGroups(): FormGroup[] { return this.guarantorsArray.controls as FormGroup[]; }
+
+  /** >>> נוח לשימוש בתבנית */
+  get currentGroup(): FormGroup {
+    return this.guarantorsArray.at(this.activeIndex) as FormGroup;
   }
 
   addGuarantor() {
@@ -84,17 +95,17 @@ export class GuarantorsFormComponent {
            r.occupation || r.city || r.street || r.houseNumber ||
            r.loanLink || r.email)
       )
-    .map(r => ({
-      fullName: `${(r.firstName || '').trim()} ${(r.lastName || '').trim()}`.trim(),
-      idNumber: (r.idNumber || '').trim(),
-      phone: (r.phone || '').trim(),
-      occupation: (r.occupation || '').trim(),
-      city: (r.city || '').trim(),
-      street: (r.street || '').trim(),
-      houseNumber: (r.houseNumber || '').trim(),
-      loanLink: (r.loanLink || '').trim(),
-      email: (r.email || '').trim(),
-    }));
+      .map(r => ({
+        fullName: `${(r.firstName || '').trim()} ${(r.lastName || '').trim()}`.trim(),
+        idNumber: (r.idNumber || '').trim(),
+        phone: (r.phone || '').trim(),
+        occupation: (r.occupation || '').trim(),
+        city: (r.city || '').trim(),
+        street: (r.street || '').trim(),
+        houseNumber: (r.houseNumber || '').trim(),
+        loanLink: (r.loanLink || '').trim(),
+        email: (r.email || '').trim(),
+      }));
     this.guarantorsChange.emit(list);
   }
 }

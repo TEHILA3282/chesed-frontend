@@ -1,73 +1,117 @@
 <section class="register-page" dir="rtl">
-  <!-- פס כחלחל קבוע -->
   <div class="blue-band" aria-hidden="true"></div>
 
   <div class="form-shell">
     <div class="card">
-
-      <!-- כותרת + קישור – בתוך הכרטיס -->
       <header class="header header--in-card">
         <h1 class="title">{{ institution.name }} | הרשמה</h1>
         <p class="sub">משתמש קיים? <a routerLink="/login">לחץ להתחברות</a></p>
       </header>
 
       <form
+        name="register-form"
         [formGroup]="form"
         (ngSubmit)="onSubmit()"
-        autocomplete="off"
+        autocomplete="on"
         autocapitalize="off"
         spellcheck="false"
+        novalidate
       >
         <div class="form-grid">
 
+          <!-- שם פרטי -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>שם פרטי</mat-label>
-            <input matInput formControlName="FirstName" required />
+            <input matInput formControlName="FirstName"
+                   name="reg-first-name"
+                   autocomplete="section-register given-name"
+                   required placeholder="שם פרטי*" />
+            <mat-error *ngIf="form.get('FirstName')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('FirstName')?.hasError('pattern')">הקליד/י שם תקין</mat-error>
           </mat-form-field>
 
+          <!-- שם משפחה -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>שם משפחה</mat-label>
-            <input matInput formControlName="LastName" required />
+            <input matInput formControlName="LastName"
+                   name="reg-last-name"
+                   autocomplete="section-register family-name"
+                   required placeholder="שם משפחה*" />
+            <mat-error *ngIf="form.get('LastName')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('LastName')?.hasError('pattern')">הקליד/י שם תקין</mat-error>
           </mat-form-field>
 
+          <!-- תעודת זהות -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>תעודת זהות</mat-label>
-            <input matInput formControlName="ID" required inputmode="numeric" autocomplete="off" />
+            <input matInput formControlName="ID"
+                   name="reg-id"
+                   required inputmode="numeric"
+                   autocomplete="section-register username"
+                   placeholder="תעודת זהות*" />
+            <mat-error *ngIf="form.get('ID')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('ID')?.hasError('pattern')">מספר ת"ז צריך להיות 8–9 ספרות</mat-error>
           </mat-form-field>
 
+          <!-- טלפון נייד -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>טלפון</mat-label>
-            <input matInput formControlName="PhoneNumber" inputmode="tel" autocomplete="off" />
+            <input matInput formControlName="PhoneNumber"
+                   name="reg-mobile"
+                   inputmode="tel"
+                   autocomplete="section-register tel-national"
+                   placeholder="טלפון" />
+            <mat-error *ngIf="form.get('PhoneNumber')?.hasError('pattern')">מספר לא תקין (9 ספרות)</mat-error>
           </mat-form-field>
 
+          <!-- טלפון קווי -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>נייד</mat-label>
-            <input matInput formControlName="LandlineNumber" inputmode="tel" autocomplete="off" />
+            <input matInput formControlName="LandlineNumber"
+                   name="reg-landline"
+                   inputmode="tel"
+                   autocomplete="section-register tel"
+                   placeholder="נייד" />
+            <mat-error *ngIf="form.get('LandlineNumber')?.hasError('pattern')">מספר לא תקין (10 ספרות)</mat-error>
           </mat-form-field>
 
+          <!-- דוא"ל -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>דוא"ל</mat-label>
-            <input matInput formControlName="Email" required autocomplete="off" />
+            <input matInput formControlName="Email"
+                   name="reg-email"
+                   required
+                   autocomplete="section-register email"
+                   placeholder="דוא״ל*" />
+            <mat-error *ngIf="form.get('Email')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('Email')?.hasError('email')">דוא"ל לא תקין</mat-error>
           </mat-form-field>
 
-          <!-- סטטוס -->
-          <mat-form-field appearance="fill" class="cc-field cc-select">
-            <mat-label>סטטוס</mat-label>
-            <mat-select formControlName="PersonalStatus" required>
+          <!-- סטטוס אישי -->
+          <mat-form-field appearance="fill"
+                          class="cc-field cc-select"
+                          [class.is-empty]="!form.get('PersonalStatus')?.value">
+            <mat-select formControlName="PersonalStatus"
+                        name="reg-personal-status"
+                        required autocomplete="off">
+              <mat-option value="" disabled>סטטוס*</mat-option>
               <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
             </mat-select>
-            <span matSuffix class="cc-suffix">
+
+            <span matSuffix class="cc-suffix" aria-hidden="true">
               <svg viewBox="0 0 12.74 6.74" width="12.74" height="6.74" fill="none"
                    stroke="#192A4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 1 L6.37 5.74 L11.74 1"></path>
               </svg>
             </span>
+
+            <mat-error *ngIf="form.get('PersonalStatus')?.hasError('required')">בחר/י סטטוס</mat-error>
           </mat-form-field>
 
           <!-- תאריך לידה -->
           <mat-form-field appearance="fill" class="cc-field cc-date">
-            <mat-label>תאריך לידה</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="DateOfBirth" autocomplete="off" />
+            <input matInput
+                   [matDatepicker]="picker"
+                   formControlName="DateOfBirth"
+                   name="reg-bday"
+                   autocomplete="section-register bday"
+                   placeholder="תאריך לידה (בחירה מלוח)"
+                   (blur)="normalizeDobFromText($event)"
+                   (dateChange)="normalizeDobFromPicker($event)" />
             <mat-datepicker-toggle matSuffix [for]="picker" class="cc-suffix cc-date-toggle">
               <svg matDatepickerToggleIcon viewBox="0 0 32 33" width="31" height="32.8" fill="none"
                    stroke="#192A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -81,33 +125,98 @@
               </svg>
             </mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="form.get('DateOfBirth')?.hasError('futureDate')">תאריך לא יכול להיות עתידי</mat-error>
           </mat-form-field>
 
+          <!-- עיר -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>עיר</mat-label>
-            <input matInput formControlName="City" required autocomplete="off" />
+            <input matInput formControlName="City"
+                   name="reg-city"
+                   required
+                   autocomplete="section-register address-level2"
+                   placeholder="עיר*" />
+            <mat-error *ngIf="form.get('City')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('City')?.hasError('pattern')">ערך לא תקין</mat-error>
           </mat-form-field>
 
+          <!-- רחוב -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>רחוב</mat-label>
-            <input matInput formControlName="Street" required autocomplete="off" />
+            <input matInput formControlName="Street"
+                   name="reg-street"
+                   required
+                   autocomplete="section-register address-line1"
+                   placeholder="רחוב*" />
+            <mat-error *ngIf="form.get('Street')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('Street')?.hasError('pattern')">ערך לא תקין</mat-error>
           </mat-form-field>
 
+          <!-- מספר בית -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>מספר בית</mat-label>
-            <input matInput formControlName="HouseNumber" required autocomplete="off" />
+            <input matInput formControlName="HouseNumber"
+                   name="reg-house-number"
+                   required
+                   autocomplete="section-register address-line2"
+                   placeholder="מספר בית*" />
+            <mat-error *ngIf="form.get('HouseNumber')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('HouseNumber')?.hasError('pattern')">ערך לא תקין</mat-error>
           </mat-form-field>
 
+          <!-- סיסמה -->
           <mat-form-field appearance="fill" class="cc-field">
-            <mat-label>סיסמה</mat-label>
-            <input matInput type="password" formControlName="Password" required autocomplete="new-password" />
+            <input matInput
+                   [type]="hidePassword ? 'password' : 'text'"
+                   formControlName="Password"
+                   name="reg-password"
+                   required
+                   autocomplete="section-register new-password"
+                   placeholder="סיסמה*" />
+            <button matSuffix type="button" class="cc-suffix cc-eye"
+                    (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="hidePassword ? 'הצג סיסמה' : 'הסתר סיסמה'">
+              <svg *ngIf="hidePassword" viewBox="0 0 24 24" width="22" height="22" fill="none"
+                   stroke="#192A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="!hidePassword" viewBox="0 0 24 24" width="22" height="22" fill="none"
+                   stroke="#192A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1-3.17 4.49"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+            <mat-error *ngIf="form.get('Password')?.hasError('required')">שדה חובה</mat-error>
+            <mat-error *ngIf="form.get('Password')?.hasError('minlength')">לפחות 8 תווים</mat-error>
+            <mat-error *ngIf="form.get('Password')?.hasError('pattern')">אותיות ומספרים לפחות</mat-error>
           </mat-form-field>
 
+          <!-- אימות סיסמה -->
           <mat-form-field appearance="fill" class="cc-field cc-field--confirm">
-            <mat-label>אימות סיסמה</mat-label>
-            <input matInput type="password" formControlName="ConfirmPassword" required autocomplete="new-password" />
+            <input matInput
+                   [type]="hideConfirm ? 'password' : 'text'"
+                   formControlName="ConfirmPassword"
+                   name="reg-password-confirm"
+                   required
+                   autocomplete="section-register new-password"
+                   placeholder="אימות סיסמה*" />
+            <button matSuffix type="button" class="cc-suffix cc-eye"
+                    (click)="hideConfirm = !hideConfirm"
+                    [attr.aria-label]="hideConfirm ? 'הצג אימות' : 'הסתר אימות'">
+              <svg *ngIf="hideConfirm" viewBox="0 0 24 24" width="22" height="22" fill="none"
+                   stroke="#192A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="!hideConfirm" viewBox="0 0 24 24" width="22" height="22" fill="none"
+                   stroke="#192A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.4 20.4 0 0 1-3.17 4.49"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+            <mat-error *ngIf="form.hasError('passwordsMismatch')">הסיסמאות אינן תואמות</mat-error>
+            <mat-error *ngIf="form.get('ConfirmPassword')?.hasError('required') && !form.hasError('passwordsMismatch')">שדה חובה</mat-error>
           </mat-form-field>
 
+          <!-- כפתור שליחה -->
           <button type="submit" class="cta cta--form" [disabled]="form.pending || form.invalid">
             <span class="cta__text">שלח טופס</span>
             <span class="cta__icon" aria-hidden="true">
@@ -117,8 +226,9 @@
               </svg>
             </span>
           </button>
-
         </div>
+
+        <p class="form-error" *ngIf="errorMessage">{{ errorMessage }}</p>
       </form>
     </div>
   </div>

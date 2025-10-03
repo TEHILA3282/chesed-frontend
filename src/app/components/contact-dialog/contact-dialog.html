@@ -1,44 +1,51 @@
-<div dir="rtl" class="contact-modal">
-  <!-- כותרת/פס כחול -->
-  <div class="hero">
-    <h2 class="hero-title">יצירת קשר </h2>
-
-    <p class="hero-lines">
-      אנו משתדלים מאוד לתת מענה לכל פניה. לשיחה טלפונית ניתן להתקשר
-      <a class="phone-pill" [href]="'tel:' + (info?.phone || '03-0000000')">
-        {{ info?.phone || '03-0000000' }}
-      </a><br />
-      זמינות: {{ info?.availabilityText || 'א׳–ה׳ 09:30–10:30' }}
-    </p>
-
-    <p class="hero-note">
-      טופס יצירת קשר זה הינו <b>רק לצורך בעיות כניסה והרשמה לאתר</b>, כל פעולה בגמ״ח ניתן לבצע באתר בפעולות ממוקדות.
-      במקרה וישלח טופס לביצוע פעולות לצערנו לא נוכל להתייחס לטפסים אלו.
-    </p>
-  </div>
-
-  <!-- גוף הטופס -->
-  <form class="form-area" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="grid">
-      <div class="cell">
-        <input class="field" type="text" formControlName="firstName" placeholder="שם פרטי*" />
-      </div>
-      <div class="cell">
-        <input class="field" type="text" formControlName="lastName" placeholder="שם משפחה*" />
-      </div>
-
-      <div class="cell">
-        <input class="field" type="email" formControlName="email" placeholder="אימייל*" />
-      </div>
-      <div class="cell">
-        <input class="field" type="text" formControlName="subject" placeholder="נושא*" />
-      </div>
-
-      <div class="cell cell--full">
-        <textarea class="field field--textarea" rows="5" formControlName="message" placeholder="הודעה*"></textarea>
-      </div>
+<!-- אוברליי עם גלילה -->
+<div class="contact-overlay" dir="rtl" (click)="close?.()">
+  <div class="contact-modal" (click)="$event.stopPropagation()">
+    <!-- כותרת/פס כחול -->
+    <div class="hero" *ngIf="info as i; else loading">
+      <h2 class="hero-title">יצירת קשר</h2>
+      <p class="hero-lines">
+        אנו משתדלים מאוד לתת מענה לכל פניה. לשיחה טלפונית ניתן להתקשר
+        <a class="phone-pill" [href]="'tel:' + i.phone">{{ i.phone }}</a><br />
+        זמינות: {{ i.availabilityText }}
+      </p>
+      <p class="hero-note">
+        טופס יצירת קשר זה הינו <b>רק לצורך בעיות כניסה והרשמה לאתר</b>, כל פעולה בגמ״ח ניתן לבצע באתר בפעולות ממוקדות.
+        במקרה וישלח טופס לביצוע פעולות לצערנו לא נוכל להתייחס לטפסים אלו.
+      </p>
     </div>
 
-    <button class="send-btn" type="submit" [disabled]="form.invalid || loading">שליחה</button>
-  </form>
+    <ng-template #loading>
+      <div class="hero">
+        <h2 class="hero-title">יצירת קשר</h2>
+        <p class="hero-lines skeleton">טוען פרטי מוסד…</p>
+      </div>
+    </ng-template>
+
+    <!-- גוף הטופס -->
+    <form class="form-area" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="grid">
+        <div class="cell">
+          <input class="field" type="text" formControlName="firstName" placeholder="שם פרטי*" />
+        </div>
+        <div class="cell">
+          <input class="field" type="text" formControlName="lastName" placeholder="שם משפחה*" />
+        </div>
+        <div class="cell">
+          <input class="field" type="email" formControlName="email" placeholder="דוא״ל*" />
+        </div>
+        <div class="cell">
+          <input class="field" type="text" formControlName="subject" placeholder="נושא*" />
+        </div>
+        <div class="cell cell--full">
+          <textarea class="field field--textarea" rows="5" formControlName="message" placeholder="הודעה*"></textarea>
+        </div>
+      </div>
+
+      <!-- כפתור דביק לתחתית המודל -->
+      <div class="send-wrap">
+        <button class="send-btn" type="submit" [disabled]="form.invalid || loading">שליחה</button>
+      </div>
+    </form>
+  </div>
 </div>
