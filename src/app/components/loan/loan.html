@@ -1,71 +1,81 @@
-<div class="loan-header">
-  <h2 class="main-title">{{ loanTypeTitle }}</h2>
-  <p class="subtitle">{{ subtitleText }}</p>
-</div>
+<section class="loan-page" dir="rtl" aria-labelledby="loanTitle">
+  <header class="loan-header">
+    <h2 id="loanTitle" class="main-title">{{ loanTypeTitle }}</h2>
+    <p class="subtitle">{{ subtitleText }}</p>
+  </header>
 
-<div class="loan-container">
-<form #loanForm="ngForm" (ngSubmit)="onSubmit()" dir="rtl" class="form-wrapper">
+  <article class="loan-card" aria-label="טופס בקשה">
+    <form #loanForm="ngForm" (ngSubmit)="onSubmit()" class="form-wrapper" autocomplete="off">
 
-    <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label>על סך</mat-label>
-      <input matInput type="number" [(ngModel)]="amount" name="amount" required />
-    </mat-form-field>
+      <!-- על סך -->
+      <mat-form-field appearance="fill" floatLabel="auto" class="field">
+        <mat-label>על סך</mat-label>
+        <input matInput type="number" [(ngModel)]="amount" name="amount" required />
+      </mat-form-field>
 
-    <mat-form-field *ngIf="!isBridge" appearance="fill" style="width: 100%;">
-      <mat-label>מספר תשלומים</mat-label>
-      <input matInput type="number" [(ngModel)]="paymentsCount" name="paymentsCount" required />
-    </mat-form-field>
+      <!-- מספר תשלומים -->
+      <mat-form-field appearance="fill" floatLabel="auto" class="field" [hidden]="isBridge">
+        <mat-label>מספר תשלומים</mat-label>
+        <input matInput type="number" [(ngModel)]="paymentsCount" name="paymentsCount" required />
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label>לאיזו מטרה הינך מעוניין בהלוואה?</mat-label>
-      <mat-select [(ngModel)]="loanPurpose" name="loanPurpose" required>
-        <mat-option *ngFor="let purpose of loanPurposes" [value]="purpose">
-          {{ purpose }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- מטרה -->
+      <mat-form-field appearance="fill" floatLabel="auto" class="field">
+        <mat-label>לאיזו מטרה ההלוואה?</mat-label>
+        <mat-select [(ngModel)]="loanPurpose" name="loanPurpose" required>
+          <mat-option *ngFor="let purpose of loanPurposes" [value]="purpose">{{ purpose }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <p *ngIf="detailsHelper" class="helper-text">{{ detailsHelper }}</p>
+      <!-- תיאור -->
+      <mat-form-field appearance="fill" floatLabel="auto" class="field textarea">
+        <mat-label>{{ detailsLabel }}</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="description"
+          name="description"
+          rows="4"
+          [placeholder]="detailsPlaceholder"
+          required
+        ></textarea>
+        <mat-hint *ngIf="detailsHelper">{{ detailsHelper }}</mat-hint>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" style="width: 100%;">
-      <mat-label>{{ detailsLabel }}</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="description"
-        name="description"
-        rows="4"
-        [placeholder]="detailsPlaceholder"
-        required
-      ></textarea>
-    </mat-form-field>
+      <!-- האם ההלוואה לדירה -->
+      <div class="question">
+        <label class="question__label">האם ההלוואה לדירה?</label>
 
-    <ng-container *ngIf="!isBridge">
-      <label>האם ההלוואה לדירה?</label>
-      <mat-radio-group [(ngModel)]="isForApartment" name="isForApartment" required>
-        <mat-radio-button value="yes">כן</mat-radio-button>
-        <mat-radio-button value="no">לא</mat-radio-button>
-      </mat-radio-group>
-
-      <div *ngIf="isForApartment === 'yes'" class="apartment-details">
-        <p>קופת הגמ"ח תגבה באופן חד פעמי סכום של 15 ש"ח מחשבון הבנק של המבקש לצורך אימות עניין הרכישה</p>
-        <mat-checkbox [(ngModel)]="apartmentConfirmed" name="apartmentConfirmed">מאשר/ת</mat-checkbox>
+        <mat-radio-group class="question__radios" [(ngModel)]="isForApartment" name="isForApartment" required>
+          <mat-radio-button class="radio" value="yes">כן</mat-radio-button>
+          <mat-radio-button class="radio" value="no">לא</mat-radio-button>
+        </mat-radio-group>
       </div>
-    </ng-container>
 
-    <div class="guarantors-grid">
- <app-guarantors-form
-  (guarantorsChange)="onGuarantorsChange($event)">
-</app-guarantors-form>
-    </div>
+      <!-- פירוט ואישור -->
+      <div class="apartment-details" *ngIf="isForApartment === 'yes'">
+        <p class="apartment-details__text">
+          קופת הגמ"ח תגבה באופן חד פעמי סכום של 15 ש"ח מחשבון הבנק של המבקש לצורך אימות ענין הרכישה
+        </p>
+        <mat-checkbox class="confirm" [(ngModel)]="apartmentConfirmed" name="apartmentConfirmed">
+          מאשר/ת
+        </mat-checkbox>
+      </div>
 
-      <button
-    class="submit-btn"
-    type="submit"
-    [disabled]="
-      loanForm.invalid ||
-      (!isBridge && isForApartment === 'yes' && !apartmentConfirmed)
-    ">
-    אישור
-  </button>
-  </form>
-</div>
+      <!-- ערבים -->
+      <div class="guarantors-grid">
+        <app-guarantors-form (guarantorsChange)="onGuarantorsChange($event)"></app-guarantors-form>
+      </div>
+
+      <!-- כפתור שליחה -->
+      <div class="actions">
+        <button
+          class="submit-btn"
+          type="submit"
+          [disabled]="loanForm.invalid || (isForApartment === 'yes' && !apartmentConfirmed)"
+        >
+          אישור
+        </button>
+      </div>
+    </form>
+  </article>
+</section>

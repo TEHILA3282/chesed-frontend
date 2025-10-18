@@ -1,46 +1,130 @@
-.main-title {
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+:host{
+  --brand-blue:#192A4A; --ink:#192A4A; --paper:#F6F4F1; --muted:#E1E3EB;
+  --header-h:72px; --card-w:min(871px,92vw); --card-r:52.5px;
+  --field-h:62px; --field-r:18px;
+  --band-h:clamp(260px,19.2vw,368px); --side-pad:clamp(18px,3vw,28px);
+  --pay-w:574px; --figma-font:19.555px; --label-fz:var(--figma-font);
 }
 
-.subtitle {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-
-  .highlight {
-    font-weight: bold;
-    display: inline;
-    color:  rgb(69, 51, 51);
-  }
+/* ===== מסך ===== */
+.deposit-screen{
+  position:relative; min-height:calc(100dvh - var(--header-h));
+  padding:clamp(24px,7vh,56px) 0 calc(var(--band-h) + clamp(24px,8vh,72px));
+  background:var(--paper);
+  display:flex; flex-direction:column; align-items:center;
 }
 
-.form-wrapper {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px  rgb(69, 51, 51);
-  padding: 2rem;
-  max-width: 600px;
-  margin: 0 auto 2rem auto; 
+/* רצועה כחולה */
+.bottom-band{ position:fixed; inset:auto 0 0 0; height:max(var(--band-h),35vh); background:var(--brand-blue); z-index:0; }
+
+/* ===== כרטיס ===== */
+.form-card{
+  position:relative; z-index:1; width:var(--card-w);
+  background:#fff; border:1px solid var(--brand-blue); border-radius:var(--card-r);
+  padding:clamp(22px,3vw,36px) clamp(22px,3.8vw,44px);
 }
 
-.submit-btn {
-  width: 100%;
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 14px;
-  font-size: 1.15em;
-  cursor: pointer;
-  margin-top: 10px;
-  font-weight: bold;
-  transition: background 0.2s;
+.form{ display:grid; grid-template-columns:1fr; gap:clamp(14px,1.6vw,20px); }
+.full{ grid-column:1 / -1; width:100%; }
 
+.card-header{ text-align:center; margin-bottom:clamp(16px,2.2vw,24px); }
+.card-header .title{
+  color:var(--brand-blue); font-weight:800; font-size:clamp(28px,3.2vw,43.523px);
+  line-height:1.2; margin:0 0 clamp(6px,.9vw,10px);
+  font-family:'Assistant',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
 }
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.card-header .subtitle{ margin:0; font-size:var(--figma-font); font-weight:300; color:#192A4A; }
+.card-header .subtitle .highlight{ font-weight:300; color:var(--ink); }
+
+.group{ margin-top:clamp(12px,1.2vw,16px); }
+.group-title{ margin:0 0 8px; color:#192A4A; text-align:right; font:700 18px 'Assistant',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
+
+/* ===== Material Form Field – בלי לשבור את מנגנון הפלואט ===== */
+:host ::ng-deep .mat-mdc-form-field{
+  width:100%;
+  .mat-mdc-form-field-underline,
+  .mat-mdc-line-ripple,
+  .mdc-line-ripple,
+  .mat-mdc-form-field-subscript-wrapper{ display:none !important; }
 }
+
+:host ::ng-deep .mat-mdc-text-field-wrapper{
+  background:var(--muted) !important;
+  border-radius:var(--field-r) !important;
+  border:0 !important; box-shadow:none !important;
+}
+
+/* גובה, ריווח ותוכן למעלה (לא באמצע) */
+:host ::ng-deep .mdc-text-field{
+  /* לא להשתמש display:flex/align-items:center – זה גורם לטקסט לשבת באמצע */
+  --mdc-filled-text-field-container-height: var(--field-h);
+  padding-inline:24px 40px !important;
+}
+
+/* אינפיקס – גובה פנימי נוח */
+:host ::ng-deep .mat-mdc-form-field-infix{ padding:14px 0 12px 0 !important; }
+
+/* קלט/סלקט – פונט/יישור */
+:host ::ng-deep .mdc-text-field__input,
+:host ::ng-deep .mat-mdc-select-value{
+  font-size:var(--figma-font) !important;
+  font-family:'Assistant',system-ui,-apple-system,'Segoe UI',Arial,sans-serif !important;
+  color:#192A4A !important; text-align:right !important; line-height:1.3 !important;
+}
+
+/* לייבל – מיקום/עיצוב; הפלואט של Material נשאר פעיל */
+:host ::ng-deep .mdc-floating-label{
+  right:24px !important; transform-origin:right top !important;
+  font-size:var(--label-fz) !important; font-weight:300 !important; color:#192A4A !important;
+}
+
+/* כשצריך לצוף (פוקוס/יש ערך) – מקטינים ועולים */
+:host ::ng-deep .mat-mdc-form-field-should-float .mdc-floating-label{
+  transform:translateY(-22px) scale(.82) !important; opacity:.95 !important;
+}
+
+/* Textarea – להתחיל למעלה ולגובה ראוי */
+:host ::ng-deep .mdc-text-field--textarea{ --mdc-filled-text-field-container-height:auto; }
+:host ::ng-deep .pill-area .mat-mdc-form-field-infix{
+  padding-top:18px !important; min-height:120px !important;
+}
+
+/* Select panel */
+:host ::ng-deep .mat-mdc-select-panel{
+  background:#D9D9D9 !important; border:1px solid #192A4A !important;
+  border-radius:17.842px !important; box-shadow:none !important; padding:0 !important; overflow:hidden !important;
+}
+:host ::ng-deep .mat-mdc-option{
+  height:62px !important; display:flex !important; align-items:center !important; justify-content:flex-end !important;
+  padding:0 40px 0 25px !important; font-size:var(--figma-font) !important; font-weight:300 !important; color:#192A4A !important;
+  border-top:1px solid #192A4A !important;
+}
+:host ::ng-deep .mat-mdc-option:first-child{ border-top:none !important; }
+
+/* רדיו */
+.radio-group{ display:grid; gap:8px; }
+:host ::ng-deep .mat-mdc-radio-button{
+  --mdc-radio-selected-icon-color:#192A4A;
+  --mdc-radio-unselected-icon-color:#192A4A;
+  --mat-mdc-radio-ripple-color:transparent;
+}
+:host ::ng-deep .mat-mdc-radio-button .mdc-label{
+  font-size:var(--figma-font) !important; font-weight:300 !important; line-height:1.6 !important; color:#192A4A !important;
+}
+
+/* שורת תשלום */
+.pay-row{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.pay-width{   width: 100% !important; 
+  max-width: 100% !important;  max-width:var(--pay-w); }
+@media (max-width:640px){ .pay-width{ max-width:100%; } }
+
+/* כפתור שליחה */
+.submit-btn{
+  margin-top:clamp(8px,1.3vw,14px); width:100%; height:clamp(48px,4.1vw,56px);
+  border-radius:9999px; border:2px solid #192A4A; background:transparent; color:#192A4A;
+  font-weight:700; font-size:clamp(16px,1.1vw,18px);
+  cursor:pointer; transition:transform .08s ease, background .15s ease, color .15s ease;
+}
+.submit-btn:hover:not(:disabled){ background:rgba(25,42,74,.06); }
+.submit-btn:active:not(:disabled){ transform:translateY(1px); }
+.submit-btn:disabled{ opacity:.45; cursor:not-allowed; }

@@ -1,55 +1,70 @@
-<div class="guarantors-container" [formGroup]="form" dir="rtl">
-  <h2 class="main-title">פירוט ערבים</h2>
-  <p class="subtitle">לצורך אישור הבקשה תצטרך הנהלת הגמ"ח לאשר הערבים שברצונך להחתים
-על שטר החוב. לשם כך יש לפרט את פרטיהם של הערבים:</p>
+<div class="guarantors" [formGroup]="form" dir="rtl" aria-labelledby="guarantorsTitle">
+  <header class="header">
+    <h2 id="guarantorsTitle" class="title">פירוט ערבים</h2>
+    <p class="subtitle">
+      לצורך אישור הבקשה הנהלת הגמ"ח מאשרת את הערבים. מלאי את פרטיהם.
+    </p>
+  </header>
 
-  <div formArrayName="guarantors" class="guarantors-grid">
-    <div *ngFor="let g of guarantorFormGroups; let i = index" [formGroupName]="i" class="guarantor-card">
-      <h3 class="guarantor-title">ערב {{ i + 1 }}</h3>
+  <div class="grid" formArrayName="guarantors">
+    <div class="col" *ngFor="let g of guarantorFormGroups; let i = index" [formGroupName]="i">
+      <div class="pill title-pill">ערב {{ i + 1 }}</div>
 
-      <div class="form-field">
-        <label>שם פרטי</label>
-        <input formControlName="firstName" type="text">
-      </div>
-      <div class="form-field">
-        <label>שם משפחה</label>
-        <input formControlName="lastName" type="text">
-      </div>
-      <div class="form-field">
-        <label>תעודת זהות</label>
-        <input formControlName="idNumber" type="text">
-      </div>
-      <div class="form-field">
-        <label>טלפון</label>
-        <input formControlName="phone" type="text">
+      <div class="field">
+        <input formControlName="firstName" type="text" placeholder="שם פרטי" />
+        <span class="err" *ngIf="g.get('firstName')?.errors?.['server'] as e">{{ e }}</span>
       </div>
 
-      <div class="form-field">
-        <label>עיסוק</label>
-        <input formControlName="occupation" type="text">
+      <div class="field">
+        <input formControlName="lastName" type="text" placeholder="שם משפחה" />
+        <span class="err" *ngIf="g.get('lastName')?.errors?.['server'] as e">{{ e }}</span>
       </div>
-      <div class="form-field">
-        <label>עיר</label>
-        <input formControlName="city" type="text">
+
+      <div class="field">
+        <input formControlName="idNumber" type="text" placeholder="תעודת זהות" />
+        <span class="err" *ngIf="g.get('idNumber')?.errors?.['server'] as e">{{ e }}</span>
       </div>
-      <div class="form-field">
-        <label>רחוב</label>
-        <input formControlName="street" type="text">
+
+      <div class="field">
+        <input formControlName="phone" type="text" placeholder="טלפון" />
+        <span class="err" *ngIf="g.get('phone')?.errors?.['server'] as e">{{ e }}</span>
       </div>
-      <div class="form-field">
-        <label>מספר בית</label>
-        <input formControlName="houseNumber" type="text">
+
+      <div class="field">
+        <input formControlName="occupation" type="text" placeholder="עיסוק" />
+        <span class="err" *ngIf="g.get('occupation')?.errors?.['server'] as e">{{ e }}</span>
       </div>
-      <div class="form-field">
-        <label>קרבה ללווה</label>
-        <input formControlName="loanLink" type="text">
+
+      <div class="field">
+        <input formControlName="city" type="text" placeholder="עיר" />
+        <span class="err" *ngIf="g.get('city')?.errors?.['server'] as e">{{ e }}</span>
       </div>
-      <div class="form-field">
-        <label>אימייל</label>
-        <input formControlName="email" type="email">
+
+      <div class="field">
+        <input formControlName="street" type="text" placeholder="רחוב" />
+        <span class="err" *ngIf="g.get('street')?.errors?.['server'] as e">{{ e }}</span>
+      </div>
+
+      <div class="field">
+        <input formControlName="houseNumber" type="text" placeholder="מספר בית" />
+        <span class="err" *ngIf="g.get('houseNumber')?.errors?.['server'] as e">{{ e }}</span>
+      </div>
+
+      <div class="field">
+        <input formControlName="loanLink" type="text" placeholder="קרבה ללווה" />
+        <span class="err" *ngIf="g.get('loanLink')?.errors?.['server'] as e">{{ e }}</span>
+      </div>
+
+      <div class="field">
+        <input formControlName="email" type="email" placeholder="אימייל" />
+        <span class="err" *ngIf="g.get('email')?.errors?.['server'] as e">{{ e }}</span>
       </div>
     </div>
   </div>
 
-  <button type="button" (click)="addGuarantor()">הוסף ערב</button>
+  <div class="divider" aria-hidden="true"></div>
+
+  <div class="actions">
+    <button type="button" class="btn-outline" (click)="addGuarantor()">הוסף ערב</button>
+  </div>
 </div>

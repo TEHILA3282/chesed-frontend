@@ -38,8 +38,8 @@ $nav-text: #F6F6F6;
 }
 
 .main-nav a {
-  font-weight: 400;              /* Regular – לפי הפיגמה */
-  font-size: 22px;               /* ~21.66px */
+  font-weight: 400;
+  font-size: 22px;
   line-height: 1.2;
   text-decoration: none;
   color: $nav-text;
@@ -47,14 +47,12 @@ $nav-text: #F6F6F6;
   transition: opacity .2s ease, color .2s ease, font-weight .2s ease;
 }
 
-/* הדף הפעיל בלבד מודגש */
 .main-nav a.is-active {
-  font-weight: 800;              /* ExtraBold */
+  font-weight: 800;
   color: #fff;
   opacity: 1;
 }
 
-/* Hover רק ללא Active */
 .main-nav a:not(.is-active):hover,
 .main-nav a:not(.is-active):focus {
   opacity: 1;
@@ -66,7 +64,7 @@ $nav-text: #F6F6F6;
   user-select: none;
 }
 
-
+/* ===== טקסטים כלליים ===== */
 .info-box--primary .info-sub--primary {
   font-weight: 300;
   font-size: 18.05px;
@@ -75,7 +73,7 @@ $nav-text: #F6F6F6;
 }
 
 .search-band__container ::placeholder {
-  font-weight: 200;              /* ExtraLight */
+  font-weight: 200;
   font-size: 26px;
   color: #1924AA;
 }
@@ -84,6 +82,7 @@ body.has-results .made-by-inline {
   display: none !important;
 }
 
+/* ===== דיאלוגים כלליים ===== */
 .reset-backdrop {
   background: rgba(0, 0, 0, .45);
 }
@@ -124,6 +123,7 @@ body.has-results .made-by-inline {
   }
 }
 
+/* ===== דיאלוג אנשי קשר ===== */
 .cc-backdrop {
   background: rgba(0, 12, 24, .55) !important;
   backdrop-filter: blur(1.5px);
@@ -160,15 +160,87 @@ body.has-results .made-by-inline {
 .cdk-global-overlay-wrapper {
   overflow: visible !important;
 }
-.contact-dialog-pane .mat-mdc-dialog-container {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+
+/* ===== רדיו בצבע אחיד ===== */
+.mat-mdc-radio-button{
+  --mdc-radio-selected-icon-color:#192A4A;
+  --mdc-radio-selected-hover-icon-color:#192A4A;
+  --mdc-radio-selected-focus-icon-color:#192A4A;
+  --mdc-radio-selected-pressed-icon-color:#192A4A;
+  --mdc-radio-unselected-icon-color:#192A4A;
+  --mdc-radio-unselected-hover-icon-color:#192A4A;
+  --mdc-radio-unselected-focus-icon-color:#192A4A;
+  --mdc-radio-unselected-pressed-icon-color:#192A4A;
+  --mat-mdc-radio-ripple-color: transparent;
+  --mat-mdc-radio-checked-ripple-color: transparent;
+}
+.mat-mdc-radio-button .mdc-radio{ width:20px; height:20px; }
+.mat-mdc-radio-button .mdc-radio__background{ width:20px; height:20px; }
+.mat-mdc-radio-button .mdc-radio__outer-circle{ border-color:#192A4A; border-width:2px; }
+.mat-mdc-radio-button .mdc-radio__inner-circle{ border-color:#192A4A; border-width:7px; }
+.mat-mdc-radio-button .mdc-radio__background::before{ background-color:transparent; }
+
+/* ===== mat-form-field תמיד 100% ===== */
+.mat-mdc-form-field.full,
+.mat-mdc-form-field.full .mdc-text-field{
+  width:100%;
 }
 
-.contact-dialog-pane .mdc-dialog__surface {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
+/* ===== תיבת select (“פיל”) ===== */
+.pill-select .mdc-text-field{
+  width:100% !important;
+  min-height:62px;
+  border-radius:18px;
+  background:#D9D9D9 !important;
+  display:flex; align-items:center;
+  padding-inline:28px 44px !important;
+  box-shadow:none !important;
+}
+
+/* ✅ ===== פאנל ה-select (overlay) עם גלילה ===== */
+.mat-mdc-select-panel{
+  background:#D9D9D9 !important;
+  border:1px solid #192A4A !important;
+  border-radius:17.842px !important;
+  box-shadow:none !important;
+  padding:0 !important;
+
+  /* העדכון החדש – גלילה פנימית */
+  max-height: 50vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* עיצוב הפריטים */
+.mat-mdc-option{
+  height:62px !important;
+  display:flex; align-items:center; justify-content:flex-end;
+  padding:0 40px 0 25px !important;
+  font-size:19.555px !important;
+  font-weight:300 !important;
+  color:#192A4A !important;
+  border-top:1px solid #192A4A !important;
+}
+.mat-mdc-option:first-child{ border-top:none !important; }
+.mat-mdc-option.mdc-list-item--selected,
+.mat-mdc-option.mdc-list-item--activated,
+.mat-mdc-option:hover{
+  background:rgba(25,42,74,.08) !important;
+}
+
+/* ===== תיקון צבע רדיו ===== */
+.mat-mdc-radio-button .mdc-radio__outer-circle {
+  border-color: #192A4A !important;
+}
+.mat-mdc-radio-button .mdc-radio__inner-circle {
+  border-color: #192A4A !important;
+}
+.mat-mdc-radio-button.mat-mdc-radio-checked svg circle {
+  stroke: #192A4A !important;
+  fill: #192A4A !important;
+}
+.mat-mdc-radio-button.mat-accent .mdc-radio__native-control:checked + .mdc-radio__background .mdc-radio__inner-circle,
+.mat-mdc-radio-button.mat-primary .mdc-radio__native-control:checked + .mdc-radio__background .mdc-radio__inner-circle {
+  border-color: #192A4A !important;
+  background-color: #192A4A !important;
 }

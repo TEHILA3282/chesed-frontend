@@ -1,70 +1,176 @@
-.deposit-withdraw-wrapper {
-  max-width: 600px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #eee;
-  padding: 24px;
-  direction: rtl;
+:host{
+  /* משתנים לפי הפיגמה */
+  --brand-blue:#192a4a;
+  --paper:#f6f4f1;
+  --ink:#192a4a;
+  --muted:#d9d9d9;
+  --header-h:72px;
+
+  --card-w:min(871px,92vw);
+  --card-r:52.5px;
+  --inner-w:min(576px,90vw);
+  --pill-r:200px;
+
+  font-family:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);
 }
 
-.main-title {
-  text-align: center;
-  font-size: 1.6em;
-  margin-bottom: 24px;
+/* מסך ללא גלילה פנימית */
+.withdraw-screen{
+  position:fixed;
+  inset:var(--header-h) 0 0 0;
+  background:#f7f7f7;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
 }
 
-.form-box {
-  margin-bottom: 20px;
+/* רצועה כחולה */
+.bottom-band{
+  position:absolute;
+  inset:auto 0 0 0;
+  height:clamp(220px,22vh,320px);
+  background:var(--brand-blue);
+  z-index:0;
 }
 
-.subtitle {
-   font-weight: bold;
-  margin-bottom: 8px;
-  display: block;
+/* קלף */
+.card{
+  position:relative;
+  z-index:1;
+  width:var(--card-w);
+  background:var(--paper);
+  border:1px solid var(--brand-blue);
+  border-radius:var(--card-r);
+  box-sizing:border-box;
+  padding:clamp(24px,3.4vw,40px);
+  display:grid;
+  justify-items:center;
+  row-gap:clamp(18px,2.2vw,24px);
 }
 
-.input-row {
-  margin-bottom: 18px;
+/* כותרות */
+.main-title{
+  margin:0;
+  text-align:center;
+  color:var(--ink);
+  font-weight:800;
+  font-size:clamp(28px,3.2vw,43.523px);
+  line-height:1.25;
+}
+.subtitle{
+  margin:6px 0 10px;
+  text-align:center;
+  color:var(--ink);
+  font-weight:300;
+  font-size:clamp(16px,1.5vw,21.92px);
+  text-decoration:underline;
 }
 
-.input-label {
-  font-weight: bold;
-  margin-bottom: 8px;
-  display: block;
-  font-size: 1em;
+/* שדות */
+.field{
+  position:relative;
+  width:var(--inner-w);
 }
 
-.required {
-  color: #a88c00;
-  font-weight: bold;
+/* התווית הקטנה (ברירת מחדל) – באמצע עבור input קצר */
+.field-note{
+  position:absolute;
+  right:44px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--ink);
+  font-weight:300;
+  font-size:clamp(14px,1.4vw,19.555px);
+  line-height:1;
+  pointer-events:none;
+  transition: all .18s ease;
 }
 
-.input-field {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  padding: 12px;
-  font-size: 1em;
-  background: #f7f7f7;
-  margin-bottom: 8px;
+/* textarea – תמיד מתחילה למעלה */
+.field.textarea .field-note{
+  top:22px;
+  transform:none;
 }
 
-.submit-btn {
-  width: 100%;
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 14px;
-  font-size: 1.15em;
-  cursor: pointer;
-  margin-top: 10px;
-  font-weight: bold;
-  transition: background 0.2s;
+/* קלטים */
+.input{
+  width:100%;
+  box-sizing:border-box;
+  background:var(--muted);
+  border:none;
+  outline:none;
+  color:#2a2a2a;
+  border-radius:17.842px; /* פיגמה */
+  font-size:1rem;
+}
+.input--single{ height:62px;  padding:15px 44px 15px 28px; }
+.input--area  { min-height:145px; padding:22px 44px 15px 28px; resize:vertical; }
+
+/* “פיצי למעלה” – מצב אימות/פוקוס/ערך */
+@supports(selector(:has(*))){
+  /* לשדות קצרים: על פוקוס/מילוי – עולים למעלה ומקטינים */
+  .field:not(.textarea):focus-within .field-note,
+  .field:not(.textarea):has(.input:not(:placeholder-shown)) .field-note{
+    top:8px;
+    transform:none;
+    font-size:12px;
+    opacity:.98;
+  }
+
+  /* ל־textarea: על פוקוס/מילוי – עוד יותר קרובה למעלה וקטנה */
+  .field.textarea:focus-within .field-note,
+  .field.textarea:has(.input:not(:placeholder-shown)) .field-note{
+    top:10px; /* מ-22px ל-10px */
+    transform:none;
+    font-size:12px;
+    opacity:.98;
+  }
 }
 
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* —— פולבק בלי :has() (ל־Firefox ישן וכו’) —— */
+/* נשתמש במחלקות .filled / .focused מהקומפוננטה */
+.field:not(.textarea).focused .field-note,
+.field:not(.textarea).filled  .field-note{
+  top:8px;
+  transform:none;
+  font-size:12px;
+  opacity:.98;
+}
+.field.textarea.focused .field-note,
+.field.textarea.filled  .field-note{
+  top:10px;
+  transform:none;
+  font-size:12px;
+  opacity:.98;
+}
+
+/* כפתור גלולתי */
+.submit-btn{
+  width:var(--inner-w);
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+
+  padding:17px 44px;
+  border-radius:var(--pill-r);
+  border:1px solid var(--brand-blue);
+  background:transparent;
+  color:var(--ink);
+
+  font-size:clamp(18px,1.45vw,20px);
+  font-weight:400;
+  cursor:pointer;
+  transition:transform .06s ease, box-shadow .18s ease, background .18s ease;
+}
+.submit-btn:disabled{ opacity:.5; cursor:not-allowed; }
+.submit-btn:not(:disabled):hover{ background:rgba(25,42,74,.06); }
+.submit-btn:not(:disabled):active{ transform:translateY(1px); }
+
+/* מובייל */
+@media (max-width:640px){
+  .field-note{ right:24px; }
+  .input--single{ padding-right:32px; }
+  .input--area{   padding-right:32px; }
 }

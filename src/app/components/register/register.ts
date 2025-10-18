@@ -5,22 +5,89 @@ import {
   FormBuilder, FormGroup, Validators, ReactiveFormsModule,
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
-import { CommonModule, formatDate } from '@angular/common';
+import {
+  CommonModule, formatDate, registerLocaleData
+} from '@angular/common';
+import localeHe from '@angular/common/locales/he';
+
 import { AuthService } from '../../services/auth.service';
 
-import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import {
+  MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS
+} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  MatDatepickerModule
+} from '@angular/material/datepicker';
+import {
+  MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE, NativeDateAdapter
+} from '@angular/material/core';
 
 import {
-  RegistrationService,
-  RegistrationCreateDto
+  RegistrationService, RegistrationCreateDto
 } from '../../services/registration.service';
 import { InstitutionService, InstitutionConfig } from '../../services/institution.service';
+
+
+registerLocaleData(localeHe);
+
+
+class HeIlDateAdapter extends NativeDateAdapter {
+  override getFirstDayOfWeek(): number { return 0; } 
+  override parse(value: any): Date | null {
+    if (value instanceof Date && !isNaN(value.getTime())) return value;
+
+    if (typeof value === 'string') {
+      const t = value.replace(/\u200e|\u200f/g, '').trim();
+
+      // yyyy-MM-dd
+      let m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(t);
+      if (m) return this._make(+m[1], +m[2], +m[3]);
+
+      // dd/MM/yyyy או dd.MM.yyyy או dd-MM-yyyy
+      m = /^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})$/.exec(t);
+      if (m) return this._make(+m[3], +m[2], +m[1]);
+
+      // d/M/yy → נניח 19xx/20xx בצורה חכמה (00–49 => 2000+, 50–99 => 1900+)
+      m = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/.exec(t);
+      if (m) {
+        const d = +m[1], mo = +m[2], yy = +m[3];
+        const y = yy <= 49 ? 2000 + yy : 1900 + yy;
+        return this._make(y, mo, d);
+      }
+    }
+    return null;
+  }
+
+  override format(date: Date, displayFormat: any): string {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+  private _make(y: number, m: number, d: number): Date | null {
+    if (y < 1900 || y > 2100) return null;
+    if (m < 1 || m > 12) return null;
+    if (d < 1 || d > 31) return null;
+    const dt = new Date(y, m - 1, d);
+    return (dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d) ? dt : null;
+  }
+}
+
+export const HE_IL_DATE_FORMATS = {
+  parse: { dateInput: 'DD/MM/YYYY' },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM yyyy',
+    dateA11yLabel: 'DD/MM/YYYY',
+    monthYearA11yLabel: 'MMMM yyyy',
+  },
+};
 
 @Component({
   selector: 'app-register',
@@ -33,7 +100,10 @@ import { InstitutionService, InstitutionConfig } from '../../services/institutio
   templateUrl: './register.html',
   styleUrls: ['./register.scss'],
   providers: [
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill', hideRequiredMarker: false } }
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill', hideRequiredMarker: false } },
+    { provide: MAT_DATE_LOCALE, useValue: 'he-IL' },
+    { provide: DateAdapter, useClass: HeIlDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: HE_IL_DATE_FORMATS },
   ]
 })
 export class Register {
@@ -60,7 +130,7 @@ export class Register {
       FirstName: ['', [Validators.required, Validators.pattern(/^[\u0590-\u05FFa-zA-Z\s'-]{2,}$/)]],
       LastName:  ['', [Validators.required, Validators.pattern(/^[\u0590-\u05FFa-zA-Z\s'-]{2,}$/)]],
       ID:        ['', [Validators.required, Validators.pattern(/^\d{8,9}$/)]],
-      PhoneNumber:   ['', [Validators.pattern(/^\d{9}$/)]],
+      PhoneNumber:   ['', [Validators.pattern(/^\d{9,10}$/)]],
       LandlineNumber:['', [Validators.pattern(/^\d{10}$/)]],
       Email:     ['', [Validators.required, Validators.email]],
       Role:      ['User'],
@@ -97,7 +167,7 @@ export class Register {
     });
   }
 
-  /** מאפשרים הקלדת תאריך חופשי ונרמל לפורמט בטוח */
+  /** הקלדה חופשית – נרמול */
   normalizeDobFromText(ev: FocusEvent) {
     const input = ev.target as HTMLInputElement;
     const text  = (input?.value || '').trim();
@@ -113,14 +183,13 @@ export class Register {
     }
   }
 
-  /** כשהמשתמש בוחר מהפיקר – פשוט לוודא שזה Date */
+  /** בחירה מה-Datepicker */
   normalizeDobFromPicker(ev: any) {
     const d: Date | null = ev?.value ? new Date(ev.value) : null;
     this.form.get('DateOfBirth')?.setValue(d);
     this.form.get('DateOfBirth')?.updateValueAndValidity();
   }
 
-  /** פרסר ידידותי */
   private parseFreeDate(text: string): Date | null {
     const t = text.replace(/\u200e|\u200f/g, '').trim();
 
@@ -130,8 +199,12 @@ export class Register {
     m = /^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})$/.exec(t);
     if (m) return this.makeDate(+m[3], +m[2], +m[1]);
 
-    m = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(t);
-    if (m) return this.makeDate(+m[3], +m[1], +m[2]);
+    m = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/.exec(t);
+    if (m) {
+      const d = +m[1], mo = +m[2], yy = +m[3];
+      const y = yy <= 49 ? 2000 + yy : 1900 + yy;
+      return this.makeDate(y, mo, d);
+    }
 
     return null;
   }
@@ -178,9 +251,10 @@ export class Register {
 
     const v = this.trimFields(this.form.value);
 
+    // שמירה לשרת תמיד בפורמט ISO יומי 'yyyy-MM-dd'
     let birth: string | undefined = undefined;
     if (v.DateOfBirth instanceof Date && !isNaN(v.DateOfBirth.getTime())) {
-      birth = formatDate(v.DateOfBirth, 'yyyy-MM-dd', 'en-IL');
+      birth = formatDate(v.DateOfBirth, 'yyyy-MM-dd', 'he-IL');
     }
 
     const payload: RegistrationCreateDto = {
@@ -206,12 +280,10 @@ export class Register {
           this.registrationService.register(payload).subscribe({
             next: () => {
               const username = payload.ID || payload.Email;
-              // מעבר לדף התחברות עם העברת *רק* username ב־history.state
               this.router.navigate(
                 this.institutionService.link(['login']),
                 { state: { username } }
               );
-           
             },
             error: () => this.errorMessage = 'ארעה שגיאה במהלך ההרשמה'
           });

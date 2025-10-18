@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './deposit.html',
   styleUrls: ['./deposit.scss'],
   standalone: true,
+  encapsulation: ViewEncapsulation.Emulated, 
   imports: [
     CommonModule,
     FormsModule,
@@ -32,7 +33,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class DepositComponent implements OnInit {
   amount: number | null = null;
-  largeString: string = '';
+  largeString = '';
   depositType: DepositType | null = null;
 
   depositMethod: 'contact' | 'automatic' | null = null;
@@ -82,15 +83,12 @@ export class DepositComponent implements OnInit {
   onSubmit(form: NgForm) {
     if (!this.depositType) return;
 
- 
     const nowIsoUtc = new Date().toISOString();
-
 
     const chosenLocalMidnight =
       this.automaticDepositDateChoice === 'other' && this.otherDate
         ? this.toLocalIsoMidnight(this.otherDate)
         : null;
-
 
     const depositDate: string | null =
       this.depositMethod === 'automatic' && chosenLocalMidnight
@@ -112,13 +110,12 @@ export class DepositComponent implements OnInit {
       isDirectDeposit: this.depositMethod === 'automatic',
       depositDate,
       depositReceivedDate,
-      paymentMethod: normalizedPaymentMethod
+      paymentMethod: normalizedPaymentMethod,
     };
 
     this.depositService.addDeposit(payload).subscribe({
       next: () => {
         alert('ההפקדה נשלחה בהצלחה!');
-
         form.resetForm();
         this.amount = null;
         this.largeString = '';
@@ -129,9 +126,13 @@ export class DepositComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('שגיאה בשליחה:', err);
-        const msg = err?.error?.detail || err?.error?.title || err?.message || 'שגיאה בשליחת ההפקדה';
+        const msg =
+          err?.error?.detail ||
+          err?.error?.title ||
+          err?.message ||
+          'שגיאה בשליחת ההפקדה';
         alert(msg);
-      }
+      },
     });
   }
 }

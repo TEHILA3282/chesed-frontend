@@ -1,69 +1,226 @@
+/* ===== משתנים ===== */
+:host {
+  --brand-blue: #192a4a;
+  --paper: #f6f4f1;
+  --ink: #192a4a;
+
+  --field-bg: #e1e3eb;
+  --field-radius: 20px;
+  --field-h: 78px;
+  --textarea-h: 165px;
+
+  --split-y: clamp(340px, 38vh, 420px);
+}
+
+/* ===== רקע כללי ===== */
+.loan-page {
+  min-height: 100dvh;
+  overflow-x: hidden; /* אין גלילה רוחבית */
+  background: linear-gradient(
+    to bottom,
+    var(--paper) 0 var(--split-y),
+    var(--brand-blue) var(--split-y) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: clamp(32px, 5vh, 60px);
+}
+
+/* ===== כותרת ===== */
 .loan-header {
+  width: min(940px, 94vw);
+  margin: 0 auto 12px auto;
   text-align: center;
-  margin-bottom: 2rem;
-  margin-top: 20px;
+
+  .main-title {
+    margin: 0 0 6px 0;
+    color: var(--brand-blue);
+    font: 800 clamp(28px, 3.2vw, 43.5px) "Assistant", system-ui, sans-serif;
+  }
+
+  .subtitle {
+    margin: 0 0 24px 0;
+    color: var(--brand-blue);
+    opacity: 0.85;
+    font: 300 clamp(15px, 1.5vw, 18px) "Assistant", system-ui, sans-serif;
+  }
 }
 
-.main-title {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  color:  rgb(69, 51, 51);
-}
-
-.loan-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
+/* ===== כרטיס ===== */
+.loan-card {
+  width: min(940px, 94vw);
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px  rgb(69, 51, 51);
+  border-radius: 52px;
+  padding: clamp(28px, 4.2vw, 48px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  overflow: visible;
 }
 
+/* ===== טופס ===== */
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ===== ביטול underline ===== */
+:host ::ng-deep .mat-mdc-form-field {
+  width: 100%;
+  box-sizing: border-box;
+
+  .mat-mdc-form-field-underline,
+  .mat-mdc-line-ripple,
+  .mdc-line-ripple,
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .mdc-text-field {
+    background: var(--field-bg) !important;
+    border-radius: var(--field-radius) !important;
+    height: var(--field-h) !important;
+    min-height: var(--field-h) !important;
+    padding-inline: 22px 32px !important;
+    display: flex;
+    align-items: center;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  mat-label {
+    color: var(--ink) !important;
+    font: 300 21.92px/1 "Assistant", system-ui, sans-serif !important;
+  }
+
+  input,
+  textarea,
+  .mat-mdc-select-value {
+    color: var(--ink) !important;
+    font: 400 21.92px/1.2 "Assistant", system-ui, sans-serif !important;
+  }
+
+  &.textarea .mdc-text-field {
+    height: var(--textarea-h) !important;
+    align-items: flex-start;
+    padding-block: 18px !important;
+  }
+}
+
+/* ===== האם ההלוואה לדירה ===== */
+.question {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+
+  &__label {
+    color: var(--ink);
+    font: 600 22px/1 "Assistant", system-ui, sans-serif;
+  }
+
+  &__radios {
+    display: inline-flex;
+    gap: 16px;
+  }
+}
+
+/* תיבת פרטי הדירה */
 .apartment-details {
-  margin-top: 2rem;
-  padding: 1rem;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px  rgb(69, 51, 51);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ink);
+  border-radius: 20px;
+  padding: 24px 32px 18px;
+  color: var(--ink);
   text-align: center;
+  margin-top: 6px;
 
-  p {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color:  rgb(69, 51, 51);
-  }
-
-  mat-checkbox {
-    display: block;
-    margin-top: 1rem;
-    color:  rgb(69, 51, 51);
+  &__text {
+    max-width: 870px;
+    font: 400 21.92px/1.35 "Assistant", system-ui, sans-serif;
+    margin: 0;
   }
 }
-.guarantors-grid {
-  display: grid;
-  gap: 1.5rem;
-  margin: 2rem auto;
-  width: 100%; 
+
+/* ===== כפתורי רדיו (עגולים לפי הפיגמה) ===== */
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__outer-circle {
+  border: 1px solid #192a4a !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__inner-circle {
+  background-color: #192a4a !important;
+  width: 10px !important;
+  height: 10px !important;
+  margin: 4px !important;
+  border-radius: 50% !important;
+}
+
+:host ::ng-deep .mat-mdc-radio-button.mat-mdc-radio-checked .mdc-radio__inner-circle {
+  background-color: #192a4a !important;
+}
+
+:host ::ng-deep .mat-mdc-radio-button .mdc-radio__background {
+  border-radius: 50% !important;
+}
+
+/* ===== כפתור שליחה ===== */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  justify-content: flex-end;
 }
 
 .submit-btn {
-  width: 100%;
-  background: #000;
+  flex: 1;
+  height: 56px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--brand-blue);
   color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 14px;
-  font-size: 1.15em;
+  font: 700 20px/1 "Assistant";
+  letter-spacing: 0;
   cursor: pointer;
-  margin-top: 10px;
-  font-weight: bold;
-  transition: background 0.2s;
+  transition: filter 0.15s ease, transform 0.02s ease;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 }
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+
+/* ===== מובייל ===== */
+@media (max-width: 768px) {
+  :host {
+    --split-y: 300px;
+  }
+  .loan-card {
+    padding: 22px;
+    border-radius: 36px;
+  }
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

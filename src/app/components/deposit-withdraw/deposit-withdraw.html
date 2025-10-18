@@ -1,37 +1,55 @@
-<form #withdrawForm="ngForm" (ngSubmit)="onSubmit(withdrawForm)" novalidate>
-  <div class="deposit-withdraw-wrapper">
-    <h2 class="main-title">בקשה למשיכת הפקדה</h2>
+<!-- WithdrawDepositComponent.html -->
+<section class="withdraw-screen" dir="rtl" aria-labelledby="withdrawTitle">
+  <!-- רצועה כחולה צמודה לתחתית -->
+  <div class="bottom-band" aria-hidden="true"></div>
 
-    <div class="form-box">
-      <label class="subtitle">מבקש לבצע משיכה מתיקי ההפקדות שברשותי</label>
+  <form
+    #withdrawForm="ngForm"
+    class="card"
+    (ngSubmit)="onSubmit(withdrawForm)"
+    novalidate
+  >
+    <!-- כותרת ראשית -->
+    <h2 id="withdrawTitle" class="main-title">בקשה למשיכת הפקדה</h2>
 
-      <div class="input-row">
-        <label class="input-label">סכום <span class="required">*</span></label>
-        <input
-          type="number"
-          name="amount"               
-          [(ngModel)]="amount"
-          min="1"
-          required
-          class="input-field" />
-      </div>
+    <!-- תת־כותרת עם קו תחתון -->
+    <p class="subtitle">מבקש לבצע משיכה מתיקי ההפקדות שברשותי</p>
 
-      <div class="input-row">
-        <label class="input-label">נא פרט את בקשתך <span class="required">*</span></label>
-        <textarea
-          name="requestText"           
-          [(ngModel)]="requestText"
-          rows="5"
-          required
-          class="input-field"></textarea>
-      </div>
+    <!-- שדה סכום -->
+    <div class="field">
+      <input
+        class="input input--single"
+        type="number"
+        name="amount"
+        [(ngModel)]="amount"
+        min="1"
+        required
+        autocomplete="off"
+        placeholder=" "
+      />
+      <span class="field-note">* סכום</span>
     </div>
 
+    <!-- שדה פירוט -->
+    <div class="field textarea">
+      <textarea
+        class="input input--area"
+        name="requestText"
+        [(ngModel)]="requestText"
+        rows="5"
+        required
+        placeholder=" "
+      ></textarea>
+      <span class="field-note">* נא פרט את בקשתך</span>
+    </div>
+
+    <!-- כפתור גלולתי עם מסגרת -->
     <button
-      type="submit"                    
+      type="submit"
       class="submit-btn"
-      [disabled]="loading || withdrawForm.invalid">
+      [disabled]="loading || withdrawForm.invalid"
+    >
       {{ loading ? 'שולח...' : 'שליחה' }}
     </button>
-  </div>
-</form>
+  </form>
+</section>

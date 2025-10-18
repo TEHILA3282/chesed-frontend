@@ -18,4 +18,11 @@ export class ProgramsShellComponent implements OnInit {
   items = signal<PromoItem[]>(this.data.items);
 
   ngOnInit() {}
+
+  /** מנרמל נתיבים כדי שיעבדו גם בתת־נתיב */
+  resolve(href: string): string {
+    if (!href) return '#';
+    if (/^https?:\/\//i.test(href)) return href;       // קישור חיצוני
+    return href.startsWith('/') ? href.slice(1) : href; // נכס ב-assets
+  }
 }

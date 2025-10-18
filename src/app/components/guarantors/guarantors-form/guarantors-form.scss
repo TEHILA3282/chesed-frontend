@@ -1,66 +1,167 @@
-.guarantors-container {
-  max-width: none;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  background: none;
-  box-shadow: none;
-  border-radius: 0;
+/* ========== Guarantors Form – fields equal to header pill ========== */
+:host{
+  /* צבעים */
+  --navy:#192A4A;
+  --chip:#D9D9D9;
+  --ink:#192A4A;
+
+  /* מידות – אלו קובעות גם את הריבוע הכחול וגם את השדות */
+  --col-w: 250px;
+  --pill-h: 68px;
+  --pill-r: 18px;
+  --gap-x: 48px;
+  --gap-y: 18px;
+}
+
+/* עוזר: מבטיח שפאדינג לא יגדיל רוחב */
+.guarantors, .grid, .col, .title-pill, .field input { box-sizing: border-box; }
+
+.guarantors{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:var(--ink);
+  background:transparent;
+}
+
+/* ===== כותרת ו־סאב־טייטל מיושרים לימין ===== */
+.header{
+  width: min(calc(3 * var(--col-w) + 2 * var(--gap-x)), 100%);
+  margin-inline: auto;
+  align-self: stretch;
+  text-align: right;
+}
+.header .title{
+  margin: 0 0 8px;
+  text-align: right;
+}
+.header .subtitle{
+  margin: 0 0 24px;
+  text-align: right;
   direction: rtl;
 }
 
-.main-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.subtitle {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  color: #444;
-}
-
-.form-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.guarantors-grid {
+/* ===== גריד בעמודה קבועה – מרכז ומחשב את הרוחב לפי col-w ===== */
+.grid{
+  width: min(calc(3 * var(--col-w) + 2 * var(--gap-x)), 100%);
+  max-width: 100%;
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* שלושה ערבים בשורה */
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, var(--col-w));
+  column-gap: var(--gap-x);
+  row-gap: var(--gap-y);
 }
 
-.guarantor-card {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+.col{
+  width: var(--col-w);
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
 }
 
-.guarantor-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+/* ===== הריבוע הכחול (ערב 1/2/3) ===== */
+.title-pill{
+  width: 100%;
+  height: var(--pill-h);
+  border-radius: var(--pill-r);
+  background: var(--navy);
+  color:#F6F4F1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family: Assistant, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight:700;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height:1;
+  margin: 0 0 10px;
 }
 
-.form-field {
-  margin-bottom: 1rem;
+/* ===== השדות האפורים ===== */
+.field{
+  width: 100%;
+  margin: 0;
 
-  label {
-    display: block;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  input {
+  input{
+    display:block;
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    height: var(--pill-h);
+    border: 0;
+    outline: 0;
+    background: var(--chip);
+    border-radius: var(--pill-r);
+    padding-inline: 18px;
+    text-align: right;
+
+    font-family: Assistant, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-weight: 300;
+    font-size: clamp(15px, 1.4vw, 18px);
+    line-height: 1;
+    color: var(--ink);
+
+    &::placeholder{
+      color: rgba(25,42,74,.55);
+      font-weight: 300;
+    }
   }
+
+  /* רווח בין שדות */
+  & + .field{ margin-top: var(--gap-y); }
+}
+
+/* ===== הודעות שגיאה מתחת לשדה ===== */
+.err{
+  display:block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #c62828; /* אדום עדין */
+}
+
+/* סימון ויזואלי עדין לשדה עם שגיאה */
+input.ng-invalid.ng-touched{
+  outline: 2px solid rgba(198,40,40,.25);
+}
+
+/* ===== קו מפריד וכפתור ===== */
+.divider{
+  width: min(calc(3 * var(--col-w) + 2 * var(--gap-x)), 100%);
+  height: 1px;
+  background: var(--navy);
+  margin: 24px auto 12px;
+}
+
+.actions{
+  width: min(calc(3 * var(--col-w) + 2 * var(--gap-x)), 100%);
+  display:flex;
+  justify-content:flex-start;
+}
+
+.btn-outline{
+  width: var(--col-w);
+  height: 36px;
+  border-radius: var(--pill-r);
+  border: 1px solid var(--navy);
+  background: transparent;
+  color: var(--navy);
+  font-family: Assistant, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight: 300;
+  font-size: clamp(15px, 1.6vw, 19px);
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+
+  &:hover{ background: var(--navy); color:#F6F4F1; }
+}
+
+/* ===== רספונסיביות ===== */
+@media (max-width: 1024px){
+  :host{ --col-w: 210px; --pill-h: 60px; --gap-x: 32px; }
+  .grid{ grid-template-columns: repeat(2, var(--col-w)); justify-content:center; }
+  .actions{ justify-content:center; }
+}
+@media (max-width: 640px){
+  :host{ --col-w: 92vw; --pill-h: 56px; --gap-x: 18px; --gap-y: 14px; }
+  .grid{ grid-template-columns: 1fr; }
+  .divider{ width: 92vw; }
+  .actions{ justify-content:center; }
 }

@@ -33,13 +33,18 @@ export class LoansListComponent implements OnInit {
   }
 
   goToLoan(loan: LoanType) {
-
-    const isFreezeByName = (loan.name || '').trim() ==='בקשה להקפאת תשלומים'
+    const isFreezeByName = (loan.name || '').trim() === 'בקשה להקפאת תשלומים';
     if (isFreezeByName) {
       this.router.navigate(['/payments-freeze']);
       return;
     }
 
-    this.router.navigate(['/loan', loan.id]);
+    // כאן מעבירים את שם ההלוואה כדי שתוצג מיד בעמוד הבא
+    this.router.navigate(['/loan', loan.id], {
+      state: {
+        id: loan.id,
+        name: loan.name
+      }
+    });
   }
 }

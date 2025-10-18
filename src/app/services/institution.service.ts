@@ -28,13 +28,13 @@ export class InstitutionService {
       programsSubtitle: 'מידע ותיאורים קצרים על התוכניות'
     },
     chaiad: {
-      id: 2, name: 'גמ"ח חי עד', logo: 'assets/download.png', themeColor: '#0aa', slug: 'chaiad',
-      programsTitle: 'תוכניות ושותפים – חי עד',
-      programsSubtitle: 'תתי־כותרת לתוכניות חי עד'
+      id: 2, name: 'גמ"ח חי עד', logo: 'assets/chaiad.png', themeColor: '#0aa', slug: 'chaiad',
+      programsTitle: 'קצת עלינו...',
+      programsSubtitle: 'מידע קצר על פעילויות ושותפים'
     },
     chavuratchesed: {
       id: 3, name: 'חבורת חסד', logo: 'assets/chavuratChesed.png', themeColor: '#e67e22', slug: 'chavuratchesed',
-      programsTitle: 'פרסומת הגמ"ח – חבורת חסד',
+programsTitle: 'קצת עלינו...',
       programsSubtitle: 'מידע קצר על פעילויות ושותפים'
     },
         hafetzchesed: {

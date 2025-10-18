@@ -50,17 +50,16 @@
             <mat-error *ngIf="form.get('ID')?.hasError('pattern')">מספר ת"ז צריך להיות 8–9 ספרות</mat-error>
           </mat-form-field>
 
-          <!-- טלפון נייד -->
+          <!-- טלפונים -->
           <mat-form-field appearance="fill" class="cc-field">
             <input matInput formControlName="PhoneNumber"
                    name="reg-mobile"
                    inputmode="tel"
                    autocomplete="section-register tel-national"
-                   placeholder="טלפון" />
-            <mat-error *ngIf="form.get('PhoneNumber')?.hasError('pattern')">מספר לא תקין (9 ספרות)</mat-error>
+                   placeholder="טלפון בית" />
+            <mat-error *ngIf="form.get('PhoneNumber')?.hasError('pattern')">מספר לא תקין (9/10 ספרות)</mat-error>
           </mat-form-field>
 
-          <!-- טלפון קווי -->
           <mat-form-field appearance="fill" class="cc-field">
             <input matInput formControlName="LandlineNumber"
                    name="reg-landline"
@@ -81,13 +80,14 @@
             <mat-error *ngIf="form.get('Email')?.hasError('email')">דוא"ל לא תקין</mat-error>
           </mat-form-field>
 
-          <!-- סטטוס אישי -->
+          <!-- סטטוס אישי (עם גלילה בפנל) -->
           <mat-form-field appearance="fill"
                           class="cc-field cc-select"
                           [class.is-empty]="!form.get('PersonalStatus')?.value">
             <mat-select formControlName="PersonalStatus"
                         name="reg-personal-status"
-                        required autocomplete="off">
+                        required autocomplete="off"
+                        panelClass="cc-status-panel">
               <mat-option value="" disabled>סטטוס*</mat-option>
               <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
             </mat-select>
@@ -109,7 +109,7 @@
                    formControlName="DateOfBirth"
                    name="reg-bday"
                    autocomplete="section-register bday"
-                   placeholder="תאריך לידה (בחירה מלוח)"
+                   placeholder="תאריך לידה"
                    (blur)="normalizeDobFromText($event)"
                    (dateChange)="normalizeDobFromPicker($event)" />
             <mat-datepicker-toggle matSuffix [for]="picker" class="cc-suffix cc-date-toggle">
@@ -124,7 +124,7 @@
                 <circle cx="21" cy="18" r="1.6"/>
               </svg>
             </mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <mat-datepicker #picker startView="multi-year"></mat-datepicker>
             <mat-error *ngIf="form.get('DateOfBirth')?.hasError('futureDate')">תאריך לא יכול להיות עתידי</mat-error>
           </mat-form-field>
 

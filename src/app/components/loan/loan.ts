@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectorRef,
+  ViewEncapsulation,
+  ViewChild
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +17,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoanTypeService, LoanType } from '../../services/loan-type.service';
 import { LoansService } from '../../services/loans.service';
-import { GuarantorsFormComponent } from '../guarantors/guarantors-form/guarantors-form';
+import {
+  GuarantorsFormComponent,
+  GuarantorDTO
+} from '../guarantors/guarantors-form/guarantors-form';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
@@ -19,19 +29,28 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   styleUrls: ['./loan.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatRadioModule, MatButtonModule, MatCheckboxModule,
-    GuarantorsFormComponent, MatSnackBarModule
-  ]
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    GuarantorsFormComponent,
+    MatSnackBarModule
+  ],
+  encapsulation: ViewEncapsulation.Emulated
 })
 export class LoanComponent implements OnInit {
   @Input() loanTypeId!: number;
 
+  // חיבור לרכיב הערבים – לשם הזרקת שגיאות מהשרת
+  @ViewChild(GuarantorsFormComponent) guarantorsCmp?: GuarantorsFormComponent;
+
   loanTypeTitle = '';
   subtitleText = '';
-  isBridge = false;
-
+  isBridge = false; // הלוואת גישור
   detailsLabel = 'פרט';
   detailsPlaceholder = '';
   detailsHelper = '';
@@ -44,18 +63,18 @@ export class LoanComponent implements OnInit {
   isForApartment: string = 'no';
   apartmentConfirmed = false;
 
-  // אינדקס טאב לערבים (לשימוש עם העיצוב)
-  activeGuarantor = 0;
-
-  guarantors: { idNumber: string; fullName: string; phone: string }[] = [];
-  onGuarantorsChange(list: { idNumber: string; fullName: string; phone: string }[]) {
-    this.guarantors = list;
-  }
+  guarantors: GuarantorDTO[] = [];
 
   loanPurposes: string[] = [
-    'רכישת דירה', 'חתונה בן / בת', 'בר מצווה / בת מצווה',
-    'הרחבת דירה', 'שיפוץ דירה', 'שמחה משפחתית',
-    'כיסוי חובות', 'חובות לדירה', 'לימודים'
+    'רכישת דירה',
+    'חתונה בן / בת',
+    'בר מצווה / בת מצווה',
+    'הרחבת דירה',
+    'שיפוץ דירה',
+    'שמחה משפחתית',
+    'כיסוי חובות',
+    'חובות לדירה',
+    'לימודים'
   ];
 
   constructor(
@@ -63,42 +82,73 @@ export class LoanComponent implements OnInit {
     private loansService: LoansService,
     private route: ActivatedRoute,
     private router: Router,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loanTypeId = id;
+    // קבלת מזהה וסוג הלוואה מניווט/ראוט
+    const nav = this.router.getCurrentNavigation()?.extras?.state as
+      | { id?: number; name?: string }
+      | undefined;
+    const state = nav || (history.state as { id?: number; name?: string } | undefined);
 
-    if (this.loanTypeId) {
-      this.loanTypeService.getLoanTypeById(this.loanTypeId).subscribe((type: LoanType) => {
-        this.applyUi(type);
-      });
+    this.loanTypeId = state?.id ?? Number(this.route.snapshot.paramMap.get('id'));
+    this.loanTypeTitle = state?.name ?? '';
+
+    // להציג טקסטים מיידית
+    this.isBridge = this.loanTypeId === 2;
+    this.applyTexts();
+
+    // לוודא שם מעודכן מהשרת
+    this.fetchType();
+  }
+
+  private fetchType() {
+    if (!this.loanTypeId) return;
+    this.loanTypeService.getLoanTypeById(this.loanTypeId).subscribe({
+      next: (type: LoanType) => {
+        this.loanTypeTitle = type.name;
+        this.isBridge = type.id === 2;
+        this.applyTexts();
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('❌ שגיאה בטעינת סוג הלוואה:', err)
+    });
+  }
+
+  private applyTexts() {
+    if (this.isBridge) {
+      this.subtitleText = 'מלאו את הפרטים להלוואת גישור. הבקשה תעבור לבדיקה ואישור.';
+      this.detailsLabel = 'פרט על מקורות ההחזר הצפויים';
+      this.detailsPlaceholder =
+        'כיצד תחזיר/י את ההלוואה? תזרים, מכירת נכס, קבלת כספים וכו׳...';
+      this.detailsHelper = 'בהלוואת גישור חשוב להבין מאיפה ומתי יגיע ההחזר.';
+      this.paymentsCount = 1; // גישור – תשלום אחד
+    } else {
+      this.subtitleText = 'מלאו את הפרטים להלוואה בתשלומים. הבקשה תיבדק לאישור.';
+      this.detailsLabel = 'פרט';
+      this.detailsPlaceholder =
+        'נא לפרט את מטרת ההלוואה וכל מידע שיעזור לאשר את הבקשה';
+      this.detailsHelper = '';
+      this.paymentsCount = null;
     }
   }
 
-  private applyUi(type: LoanType) {
-    this.loanTypeTitle = type.name;
-    this.isBridge = (type.id === 2);
-
-    this.subtitleText = this.isBridge
-      ? 'מלאו את הפרטים באופן מלא והגישו בקשה להלוואת גישור. הבקשה תעבור במיידית לבדיקה ואישור'
-      : 'מלאו את הפרטים באופן מלא והגישו בקשה להלוואה בתשלומים. הבקשה תעבור במיידית לבדיקה ואישור';
-
-    if (this.isBridge) {
-      this.detailsLabel = 'פרט על מקורות ההחזר הצפויים';
-      this.detailsPlaceholder = 'איך תחזיר/י את ההלוואה? תזרים צפוי, מכירת נכס, תאריך קבלת כספים ועוד...';
-      this.detailsHelper =
-        'בהלוואת גישור קופת הגמ"ח רוצה להבין מאיפה יגיע ההחזר ומתי. נא לפרט בקצרה את מסלול ההחזר ואת הביטחונות (אם יש).';
-    } else {
-      this.detailsLabel = 'פרט';
-      this.detailsPlaceholder = 'נא לפרט את מטרת ההלוואה וכל מידע שיעזור לאשר את הבקשה';
-      this.detailsHelper = '';
-    }
+  onGuarantorsChange(list: GuarantorDTO[]) {
+    // מגיע כבר עם ""→null וסינון שורות ריקות מה-child
+    this.guarantors = Array.isArray(list) ? list : [];
   }
 
   onSubmit() {
-    if (!this.amount || (!this.isBridge && !this.paymentsCount) || !this.loanPurpose || !this.description) return;
+    // ולידציה בסיסית של ההורה
+    if (!this.amount || (!this.isBridge && !this.paymentsCount) || !this.loanPurpose || !this.description) {
+      this.snack.open('נא למלא את כל השדות הדרושים לפני שליחה', 'סגור', {
+        duration: 3000,
+        direction: 'rtl'
+      });
+      return;
+    }
 
     const payload = {
       loanTypeId: this.loanTypeId,
@@ -106,19 +156,37 @@ export class LoanComponent implements OnInit {
       paymentsCount: this.isBridge ? 1 : this.paymentsCount!,
       loanPurpose: this.loanPurpose,
       description: this.description,
-      isForApartment: this.isBridge ? false : this.isForApartment === 'yes',
-      apartmentConfirmed: this.isBridge ? false : this.apartmentConfirmed,
+      isForApartment: this.isForApartment === 'yes',
+      apartmentConfirmed: this.isForApartment === 'yes' ? this.apartmentConfirmed : false,
       guarantors: this.guarantors
     };
 
     this.loansService.create(payload).subscribe({
-      next: _ => {
-        this.snack.open('הבקשה נשמרה בהצלחה', 'סגור', { duration: 3000, direction: 'rtl' });
+      next: (_) => {
+        this.snack.open('הבקשה נשמרה בהצלחה', 'סגור', {
+          duration: 3000,
+          direction: 'rtl'
+        });
         this.router.navigate(['/loans-list']);
       },
-      error: err => {
-        this.snack.open('אירעה שגיאה בשמירה', 'סגור', { duration: 4000, direction: 'rtl' });
-        console.error('שגיאה ביצירת הלוואה', err);
+      error: (err) => {
+        // תצוגת הודעות מהשרת בתוך הטופס – 400 בלבד
+        if (err?.status === 400 && err?.error) {
+          // הזרקת שגיאות ModelState לתוך רכיב הערבים
+          this.guarantorsCmp?.applyServerErrors(err.error);
+
+          // טוסט מסכם קצר (לא חובה, נחמד ל־UX)
+          const errors = err.error?.errors as Record<string, string[]> | undefined;
+          const flat = errors ? Object.values(errors).flat() : [];
+          const msg = flat.length ? flat.slice(0, 3).join(' | ') : 'נתונים לא תקינים';
+          this.snack.open(msg, 'סגור', { duration: 5000, direction: 'rtl' });
+        } else {
+          this.snack.open('אירעה שגיאה בשמירה', 'סגור', {
+            duration: 4000,
+            direction: 'rtl'
+          });
+        }
+        console.error('❌ שגיאה ביצירת הלוואה:', err);
       }
     });
   }
